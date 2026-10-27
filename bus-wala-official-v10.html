@@ -1,0 +1,3043 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>बस वाला (Bus Wala) — Window Seat, Purane Gane</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gotu&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent-gold: #f5c518;
+      --accent-amber: #ff9f1c;
+      --brass-border: rgba(245, 197, 24, 0.32);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #070b16;
+      font-family: 'Poppins', sans-serif;
+      color: #f8fafc;
+    }
+
+    .font-hindi {
+      font-family: 'Noto Sans Devanagari', 'Gotu', sans-serif;
+    }
+
+    .font-mono-clock {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .font-serif-italic {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    /* Subtle Hero Title Glow */
+    .title-glow {
+      text-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.9),
+        0 0 36px rgba(245, 197, 24, 0.16);
+    }
+
+    /* Simple, Frameless & Elegant Floating Top-Left Timepiece */
+    .elegant-time-display {
+      text-shadow:
+        0 2px 14px rgba(0, 0, 0, 0.85),
+        0 0 24px rgba(245, 197, 24, 0.14);
+    }
+
+    /* Horn OK Please & Action Pill Buttons */
+    .horn-pill {
+      background: rgba(14, 16, 24, 0.9);
+      border: 1px solid rgba(245, 197, 24, 0.32);
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.65),
+        0 0 20px rgba(245, 197, 24, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .horn-pill:hover {
+      transform: translateY(-2px) scale(1.03);
+      border-color: rgba(245, 197, 24, 0.7);
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.8),
+        0 0 28px rgba(245, 197, 24, 0.28);
+    }
+
+    .horn-pill:active, .horn-pill.honking {
+      transform: scale(0.95);
+      border-color: #f5c518;
+      box-shadow: 0 0 35px rgba(245, 197, 24, 0.65);
+    }
+
+    /* Ultra-Sleek Dark Obsidian Frosted-Glass Music Player Dock */
+    .luxury-player-deck {
+      background: linear-gradient(165deg, rgba(16, 18, 26, 0.92) 0%, rgba(8, 9, 14, 0.96) 100%);
+      border: 1px solid rgba(245, 197, 24, 0.24);
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 8px 32px rgba(245, 197, 24, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    /* Spinning Vinyl Album Art */
+    @keyframes spinVinyl {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .vinyl-disc {
+      animation: spinVinyl 7s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .is-playing-music .vinyl-disc {
+      animation-play-state: running;
+    }
+
+    /* Golden Sliders */
+    .bus-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      outline: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .bus-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #f5c518;
+      border: 2px solid #fffbeb;
+      box-shadow: 0 0 12px rgba(245, 197, 24, 0.95);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .bus-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.3);
+    }
+
+    .bus-slider::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border: 2px solid #fffbeb;
+      border-radius: 50%;
+      background: #f5c518;
+      box-shadow: 0 0 12px rgba(245, 197, 24, 0.95);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    /* Gentle Curtain Flutter Animation inside Windows */
+    @keyframes curtainFlutter {
+      0%, 100% { transform: skewX(0deg) scaleY(1); }
+      50% { transform: skewX(-4deg) scaleY(0.98); }
+    }
+
+    .curtain-flutter {
+      transform-origin: top center;
+      transform-box: fill-box;
+      animation: curtainFlutter 1.6s ease-in-out infinite;
+      animation-play-state: paused;
+    }
+
+    .is-moving .curtain-flutter {
+      animation-play-state: running;
+    }
+
+    /* Gentle Passenger Sway */
+    @keyframes passengerSway {
+      0%, 100% { transform: translateX(0px) rotate(0deg); }
+      50% { transform: translateX(-1px) rotate(-1deg); }
+    }
+
+    .passenger-sway {
+      transform-origin: bottom center;
+      transform-box: fill-box;
+      animation: passengerSway 2.6s ease-in-out infinite;
+      animation-play-state: paused;
+    }
+
+    .is-moving .passenger-sway {
+      animation-play-state: running;
+    }
+
+    /* Cutting Chai Steam Animation in Window Seat View */
+    @keyframes steamRise {
+      0% { transform: translateY(0) scaleX(1); opacity: 0.75; }
+      50% { transform: translateY(-14px) scaleX(1.18); opacity: 0.45; }
+      100% { transform: translateY(-28px) scaleX(0.9); opacity: 0; }
+    }
+
+    .chai-steam-1 { animation: steamRise 2.4s ease-out infinite; }
+    .chai-steam-2 { animation: steamRise 2.4s ease-out 0.8s infinite; }
+    .chai-steam-3 { animation: steamRise 2.4s ease-out 1.6s infinite; }
+
+    /* Custom Scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(245, 197, 24, 0.35);
+      border-radius: 999px;
+    }
+
+
+    /* Responsive comfort and motion preferences */
+    button, input { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible {
+      outline: 2px solid #f5c518;
+      outline-offset: 3px;
+    }
+    @media (max-width: 640px) {
+      body, html { overflow: hidden; width: 100%; height: 100%; }
+      header.fixed.top-0 { padding: max(8px, env(safe-area-inset-top)) 10px 0; flex-wrap: wrap; align-items: flex-start; gap: 7px; }
+      header.fixed.top-0 > div:first-child { max-width: 48%; }
+      header.fixed.top-0 > div:first-child #clockDayDate { font-size: 8px; letter-spacing: 0; }
+      header.fixed.top-0 > div:last-child { width: 100%; justify-content: space-around; gap: 4px; padding: 7px 6px; border-radius: 16px; background: rgba(5, 8, 18, .82); }
+      header.fixed.top-0 > div:last-child button { min-width: 0; flex: 1 1 0; }
+      header.fixed.top-0 > div:last-child button > span { font-size: 8px; letter-spacing: 0; }
+      header.fixed.top-0 > div:last-child button > div { width: 30px; height: 30px; }
+      #heroHeaderSection { top: clamp(112px, 18vh, 155px); padding-left: 10px; padding-right: 10px; }
+      #heroHeaderSection h1 { font-size: clamp(2rem, 9vw, 3rem); }
+      #heroHeaderSection p { font-size: 8px; letter-spacing: .16em; }
+      #heroHeaderSection .mt-3, #heroHeaderSection .mt-3\.5 { margin-top: 8px; }
+      #busStageWrapper { bottom: 24%; padding-inline: 0; transform: scale(.88); transform-origin: bottom center; }
+      #windowSeatInteriorOverlay { z-index: 25; }
+      #interiorCabinFrame { width: 100%; height: 100%; }
+      #playerDeckSection { bottom: max(7px, env(safe-area-inset-bottom)); padding-inline: 8px; }
+      .luxury-player-deck { padding: 10px 11px; border-radius: 18px; gap: 8px; background: rgba(7, 10, 20, .9); backdrop-filter: blur(18px); }
+      #albumThumb { width: 42px; }
+      #trackTitleEl { font-size: 11px; }
+      #trackArtistEl { font-size: 9px; }
+      #prevBtn, #playPauseBtn, #nextBtn { min-width: 32px; min-height: 32px; }
+      #playlistModal { align-items: flex-end; padding: 0; }
+      #playlistModal > div { max-height: 94dvh; height: auto; border-radius: 22px 22px 0 0; padding: 15px 13px max(14px, env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; }
+      #playlistContainer { max-height: 24dvh; flex: 0 0 auto; }
+      #youtubeMusicEmbed { height: 220px; }
+      #playlistModal section { padding: 11px; }
+      #playlistModal input[type="url"] { font-size: 16px; min-height: 42px; }
+      #playlistModal button[type="submit"] { min-height: 42px; }
+    }
+    @media (max-width: 380px) {
+      header.fixed.top-0 > div:last-child button > span { font-size: 7px; }
+      #heroHeaderSection { top: 116px; }
+      #heroHeaderSection .pointer-events-auto { gap: 7px; }
+      #busStageWrapper { bottom: 26%; transform: scale(.78); }
+      #trackArtistEl { max-width: 120px; }
+      #topWindowSeatBtn, #rainToggleBtn, #ambientToggleBtn, #topPlaylistsBtn { padding: 2px; }
+      #heroHeaderSection .pointer-events-auto button { min-height: 36px; }
+
+      #youtubeMusicEmbed { height: 190px; }
+    }
+    /* Portrait-first Window Seat layout: keep the cabin labels readable on phones. */
+    .mobile-window-seat-ui { display: none; }
+    @media (max-width: 640px) {
+      #interiorCabinFrame > svg { display: none; }
+      .mobile-window-seat-ui { display: block; position: absolute; inset: 0; overflow: hidden; }
+      .mobile-seat-sign {
+        position: absolute; top: max(12vh, calc(env(safe-area-inset-top) + 90px)); left: 50%; transform: translateX(-50%);
+        width: min(90vw, 430px); padding: 10px 12px; border: 1px solid rgba(245,197,24,.78); border-radius: 10px;
+        color: #ffe7a0; text-align: center; font-family: 'Noto Sans Devanagari', sans-serif; font-size: clamp(12px, 3.4vw, 15px); font-weight: 800;
+        line-height: 1.5; letter-spacing: .01em; background: linear-gradient(135deg, rgba(48,25,13,.97), rgba(18,12,10,.97));
+        box-shadow: 0 5px 22px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.08); z-index: 2;
+      }
+      .mobile-seat-caption { display:block; margin-top: 2px; font-family: 'Poppins',sans-serif; font-size: 9px; font-weight: 500; color: #d6c6aa; letter-spacing: .12em; text-transform: uppercase; }
+      .mobile-seat-window {
+        position: absolute; top: 23%; left: 5%; width: 90%; height: 41%; border: 5px solid #b98536; border-radius: 23px;
+        box-shadow: 0 0 0 4px #17100b, 0 0 0 7px rgba(245,197,24,.45), 0 0 0 200vmax rgba(22,13,8,.88), inset 0 0 28px rgba(8,18,30,.18);
+        pointer-events: none; z-index: 1;
+      }
+      .mobile-seat-window::before { content:''; position:absolute; left:0; right:0; top:58%; height:5px; background:linear-gradient(#cbd5e1,#475569); box-shadow:0 1px 2px #000; }
+      .mobile-seat-window::after { content:''; position:absolute; left:0; right:0; top:73%; height:2px; background:rgba(203,213,225,.65); box-shadow:0 34px rgba(203,213,225,.55); }
+      .mobile-seat-curtain { position:absolute; top:23%; height:41%; width:13%; z-index:2; pointer-events:none; background:linear-gradient(90deg,#7c2d12,#c2410c 55%,#8b3518); border:1px solid rgba(245,197,24,.55); box-shadow:inset 0 0 12px rgba(0,0,0,.3); }
+      .mobile-seat-curtain.left { left:5%; border-radius:18px 4px 4px 18px; clip-path:polygon(0 0,100% 0,82% 35%,100% 100%,0 100%); }
+      .mobile-seat-curtain.right { right:5%; border-radius:4px 18px 18px 4px; clip-path:polygon(0 0,100% 0,100% 100%,0 100%,18% 40%); }
+      .mobile-seat-sill { position:absolute; z-index:2; top:64.3%; left:3%; width:94%; height:18px; border-radius:4px 4px 10px 10px; background:linear-gradient(#6b4223,#2a170c); border:1px solid #9b652c; box-shadow:0 8px 20px rgba(0,0,0,.35); }
+      .mobile-seat-actions { position:absolute; z-index:3; top:68%; left:5%; right:5%; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+      .mobile-seat-action { min-height:44px; display:flex; align-items:center; justify-content:center; gap:7px; padding:10px 12px; border:1px solid rgba(245,197,24,.5); border-radius:14px; background:rgba(12,15,23,.92); color:#fff4d2; font:600 12px 'Poppins',sans-serif; box-shadow:0 5px 16px rgba(0,0,0,.28); touch-action:manipulation; }
+      .mobile-seat-action:active { transform:scale(.98); }
+      .mobile-seat-actions .chai-action { color:#ffdda0; border-color:rgba(217,119,6,.65); }
+      #playerDeckSection { z-index: 35; }
+    }
+    @media (max-width: 380px) {
+      .mobile-seat-sign { top: max(11vh, calc(env(safe-area-inset-top) + 86px)); padding:8px 9px; }
+      .mobile-seat-window { top:24%; height:39%; }
+      .mobile-seat-curtain { top:24%; height:39%; }
+      .mobile-seat-sill { top:63.5%; }
+      .mobile-seat-actions { top:67%; gap:7px; }
+      .mobile-seat-action { padding:9px 8px; font-size:11px; }
+    }
+
+    /* Mobile: compact breadcrumb-style controls; keep the retro desktop layout unchanged. */
+    @media (max-width: 640px) {
+      header.fixed.top-0 { display:block; padding:0; height:0; z-index:45; }
+      header.fixed.top-0 > div:first-child { position:fixed; top:max(8px, env(safe-area-inset-top)); right:10px; left:auto; align-items:flex-end; }
+      header.fixed.top-0 > div:first-child #clockHourMin { font-size:17px; }
+      header.fixed.top-0 > div:first-child #clockDayDate,
+      header.fixed.top-0 > div:first-child .text-\[\#f5c518\] { display:none; }
+      #onlineCounterGroup { position:fixed; top:max(9px, env(safe-area-inset-top)); left:9px; right:auto; z-index:46; align-items:flex-start; margin:0; }
+      #onlineCounterGroup > div:first-child { padding:5px 8px; font-size:9px; }
+      #highwayToast { display:none; }
+      header.fixed.top-0 > div:last-child {
+        position:fixed; top:49px; left:8px; right:8px; width:auto; z-index:46;
+        display:flex; justify-content:space-around; gap:4px; padding:5px 6px;
+        border-radius:14px; background:rgba(7,10,20,.82); border:1px solid rgba(245,197,24,.24);
+        box-shadow:0 6px 18px rgba(0,0,0,.25); backdrop-filter:blur(16px); overflow-x:auto;
+      }
+      header.fixed.top-0 > div:last-child button {
+        display:flex; flex:1 0 auto; flex-direction:row; align-items:center; justify-content:center;
+        min-height:34px; padding:6px 8px; border-radius:10px; background:rgba(255,255,255,.035);
+        border:1px solid rgba(255,255,255,.07); gap:0; white-space:nowrap;
+      }
+      header.fixed.top-0 > div:last-child button > div { display:none; }
+      header.fixed.top-0 > div:last-child button > span { font-size:10px; letter-spacing:0; color:#e5e7eb; }
+      #heroHeaderSection { top:110px; }
+      #windowSeatInteriorOverlay { z-index:42; pointer-events:none; }
+      #interiorCabinFrame { pointer-events:none; }
+      .mobile-window-seat-ui { pointer-events:none; }
+      .mobile-seat-actions { pointer-events:auto; z-index:48; top:69%; }
+      .mobile-seat-action { pointer-events:auto; position:relative; z-index:49; min-width:124px; }
+      .mobile-seat-cup { pointer-events:none; position:absolute; z-index:4; top:57%; right:15%; width:58px; height:72px; filter:drop-shadow(0 7px 7px rgba(0,0,0,.6)); }
+      .mobile-seat-cup .cup-body { position:absolute; bottom:8px; left:9px; width:34px; height:39px; border:2px solid rgba(255,245,220,.92); border-radius:4px 4px 11px 11px; background:linear-gradient(90deg,rgba(255,255,255,.2),#b96a22 38%,#f2b34b 65%,#6f3416); box-shadow:inset 0 3px 0 rgba(255,255,255,.3); }
+      .mobile-seat-cup .cup-rim { position:absolute; top:22px; left:8px; width:36px; height:8px; border-radius:50%; background:#fef3c7; border:2px solid #e5e7eb; }
+      .mobile-seat-cup .cup-handle { position:absolute; top:31px; left:38px; width:13px; height:19px; border:3px solid #e5e7eb; border-left:0; border-radius:0 10px 10px 0; }
+      .mobile-seat-cup .steam { position:absolute; top:0; left:17px; width:22px; height:24px; border-left:2px solid rgba(255,255,255,.75); border-radius:50%; transform:rotate(18deg); animation:chaiSteamRise 2s ease-in-out infinite; }
+      .mobile-seat-cup .steam.two { left:29px; top:3px; animation-delay:.65s; }
+      @keyframes chaiSteamRise { 0%,100% { opacity:.25; transform:translateY(5px) rotate(18deg) scale(.9); } 50% { opacity:.9; transform:translateY(-4px) rotate(-10deg) scale(1.05); } }
+      #playerDeckSection { z-index:50; }
+    }
+    @media (max-width: 380px) {
+      header.fixed.top-0 > div:last-child { left:5px; right:5px; gap:3px; padding:4px; }
+      header.fixed.top-0 > div:last-child button { padding:6px 6px; }
+      header.fixed.top-0 > div:last-child button > span { font-size:9px; }
+      .mobile-seat-cup { right:12%; }
+      .mobile-seat-actions { top:69%; gap:6px; }
+      .mobile-seat-action { min-width:0; flex:1; padding:9px 6px; font-size:10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
+
+
+  
+    .bus-inline-youtube-player {
+      position: fixed; right: 12px; bottom: 128px; z-index: 29;
+      width: 220px; padding: 7px; border-radius: 14px;
+      background: rgba(5, 8, 17, .92); border: 1px solid rgba(245,197,24,.30);
+      box-shadow: 0 8px 28px rgba(0,0,0,.45); backdrop-filter: blur(12px);
+    }
+    .bus-inline-youtube-heading { margin: 0 0 5px; }
+    .bus-inline-youtube-heading h3 { font-size: 10px; line-height: 1.2; }
+    .bus-inline-youtube-heading p, .bus-inline-youtube-heading span { display:none !important; }
+    .bus-inline-youtube-status { font-size: 9px; color: #94a3b8; margin-bottom: 4px; }
+    .bus-inline-youtube-frame { width: 100%; height: 200px; overflow: hidden; border-radius: 9px; background: #000; }
+    @media (max-width: 640px) {
+      .bus-inline-youtube-player { right: 7px; bottom: 122px; width: 204px; padding: 5px; }
+      .bus-inline-youtube-frame { height: 200px; }
+      .bus-inline-youtube-status { max-width: 190px; }
+    }
+</style>
+</head>
+<body class="relative w-screen h-screen overflow-hidden select-none">
+
+  <!-- ===================================================================== -->
+  <!-- 1. FULL-SCREEN NIGHT HIGHWAY PARALLAX SCENE CANVAS                    -->
+  <!-- ===================================================================== -->
+  <canvas id="highwaySceneCanvas" class="fixed inset-0 w-full h-full z-0 pointer-events-none"></canvas>
+
+  <!-- ===================================================================== -->
+  <!-- 2. TOP HEADER BAR (Simple Elegant Time + Day/Date, Online & Controls) -->
+  <!-- ===================================================================== -->
+  <header class="fixed top-0 inset-x-0 z-30 flex items-start justify-between px-4 sm:px-7 py-3.5 text-xs pointer-events-none">
+
+    <!-- TOP LEFT: Simple, Frameless & Elegant Timepiece with Day, Date & Speed -->
+    <div class="pointer-events-auto flex flex-col items-start select-none">
+      <!-- Primary Time Line: e.g. 4:35 51 pm -->
+      <div class="flex items-baseline gap-1 elegant-time-display">
+        <span id="clockHourMin" class="font-mono-clock text-xl sm:text-2xl font-semibold text-white tracking-tight leading-none">
+          3:31
+        </span>
+        <sup id="clockSec" class="font-mono-clock text-[10px] sm:text-[11px] font-semibold text-[#f5c518] -top-2 relative ml-0.5">
+          51
+        </sup>
+        <span id="clockAmPm" class="font-mono-clock text-xs sm:text-sm font-medium text-slate-300/90 lowercase ml-0.5">
+          pm
+        </span>
+      </div>
+
+      <!-- Day & Date + Subtle Interactive Speedometer Pill -->
+      <div class="flex items-center gap-2 mt-1 text-[10px] sm:text-[11px] text-slate-300/85 font-medium tracking-wide drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+        <span id="clockDayDate" class="text-slate-200/90">Tuesday, 27 Oct 2026</span>
+        <span class="text-[#f5c518]/70">&bull;</span>
+        <button
+          id="gearShiftBtn"
+          title="Click to shift Bus Gear / Cruise Speed (Shortcut: G)"
+          class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/50 transition-all cursor-pointer"
+        >
+          <span id="speedStatusDot" class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+          <span id="speedometerText" class="font-mono-clock text-[10px] font-semibold text-amber-300">64 km/h</span>
+          <span id="gearModeLabel" class="hidden md:inline font-mono-clock text-[8.5px] uppercase tracking-wider text-slate-400">• 1x</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TOP CENTER: Live Online Passengers Indicator + Route Toast -->
+    <div id="onlineCounterGroup" class="pointer-events-auto flex flex-col items-center gap-1.5 mt-0.5">
+      <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/60 border border-white/10 backdrop-blur-md font-mono-clock text-[11px] text-slate-300/90 shadow-lg">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
+        </span>
+        <span><strong id="onlineCount" class="font-semibold text-white">—</strong> online</span>
+      </div>
+      <!-- Dynamic Toast Notification Banner -->
+      <div id="highwayToast" class="opacity-0 transition-opacity duration-300 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-200 text-[10px] font-medium shadow-lg backdrop-blur-md">
+        Route: NH-48 Desert Moonlit Highway
+      </div>
+    </div>
+
+    <!-- TOP RIGHT: Interactive Controls (Window, Baarish, NH-48, Playlists) -->
+    <div class="pointer-events-auto flex items-center gap-2.5 sm:gap-3.5 bg-slate-950/65 border border-white/10 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-xl">
+
+      <!-- 1. Window Seat POV Toggle Button -->
+      <button id="topWindowSeatBtn" title="Switch between Outside Bus View & Inside Window Seat View (Shortcut: W)" class="group flex flex-col items-center gap-0.5 text-slate-300 hover:text-amber-300 transition-colors focus:outline-none">
+        <div id="windowSeatIconBox" class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-amber-400/60 transition-colors">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current" stroke-width="2">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <line x1="12" y1="4" x2="12" y2="20" />
+            <line x1="3" y1="14" x2="21" y2="14" />
+          </svg>
+        </div>
+        <span id="windowSeatBtnLabel" class="text-[8.5px] tracking-wide text-slate-400 group-hover:text-amber-300">Window</span>
+      </button>
+
+      <!-- 2. Monsoon Rain Toggle Button -->
+      <button id="rainToggleBtn" title="Toggle Night Monsoon Rain (Shortcut: R)" class="group flex flex-col items-center gap-0.5 text-slate-300 hover:text-cyan-300 transition-colors focus:outline-none">
+        <div id="rainIconBox" class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-cyan-400/50 transition-colors">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current" stroke-width="2">
+            <path d="M20 16.2A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9" />
+            <path d="M16 14v6M8 14v6M12 16v6" stroke-linecap="round" />
+          </svg>
+        </div>
+        <span id="rainBtnLabel" class="text-[8.5px] tracking-wide text-slate-400 group-hover:text-cyan-300">Baarish</span>
+      </button>
+
+      <!-- 3. Highway Scenic Route & Engine Ambience Button -->
+      <button id="ambientToggleBtn" title="Switch Indian Night Highway Route (NH-48 Desert / Western Ghats / Konkan Coast) & Highway Engine Hum" class="group flex flex-col items-center gap-0.5 text-slate-300 hover:text-amber-300 transition-colors focus:outline-none">
+        <div id="ambientIconBox" class="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-400/50 flex items-center justify-center group-hover:border-amber-400 transition-colors">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current text-amber-300" stroke-width="2">
+            <path d="M4 19L9 5" />
+            <path d="M20 19L15 5" />
+            <path d="M12 5v3M12 11v3M12 17v2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <span id="ambientBtnLabel" class="text-[8.5px] tracking-wide text-amber-300 font-medium">NH-48</span>
+      </button>
+
+      <!-- 4. Playlists Drawer Trigger -->
+      <button id="topPlaylistsBtn" title="Open the official YouTube Music playlist" class="group flex flex-col items-center gap-0.5 text-slate-300 hover:text-white transition-colors focus:outline-none">
+        <div class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-amber-400/50 transition-colors">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
+        </div>
+        <span class="text-[8.5px] tracking-wide text-slate-400 group-hover:text-amber-300">Playlists</span>
+      </button>
+
+
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- 3. UPPER-CENTER HERO TITLE & "HORN OK PLEASE" + WINDOW SEAT TOGGLE    -->
+  <!-- ===================================================================== -->
+  <section id="heroHeaderSection" class="fixed top-[9%] sm:top-[10%] inset-x-0 z-20 flex flex-col items-center text-center pointer-events-none px-4 transition-opacity duration-500">
+    <!-- Hindi Main Title -->
+    <h1 class="font-hindi text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-wide title-glow select-none leading-tight">
+      बस वाला
+    </h1>
+
+    <!-- Subtitle with Flanking Hairlines -->
+    <div class="flex items-center gap-3 mt-1.5 sm:mt-2">
+      <span class="w-8 sm:w-14 h-[1px] bg-gradient-to-r from-transparent via-slate-300/45 to-slate-300/75"></span>
+      <p class="text-[9px] sm:text-[10px] tracking-[0.28em] uppercase text-slate-200/90 font-semibold">
+        WINDOW SEAT, PURANE GANE
+      </p>
+      <span class="w-8 sm:w-14 h-[1px] bg-gradient-to-l from-transparent via-slate-300/45 to-slate-300/75"></span>
+    </div>
+
+    <!-- Interactive Action Pills: "हॉर्न ओके प्लीज" & "खिड़की वाली सीट" -->
+    <div class="mt-3 sm:mt-3.5 flex items-center gap-2.5 pointer-events-auto">
+      <!-- Horn OK Please Button -->
+      <button
+        id="hornBtn"
+        title="Click to Honk Musical Indian Bus Horn & Boost Speed! (Shortcut: H)"
+        class="horn-pill rounded-full pl-2 pr-3.5 py-1.5 flex items-center gap-2.5 cursor-pointer focus:outline-none group"
+      >
+        <span class="w-6 h-6 rounded-full bg-[#f5c518] text-slate-950 flex items-center justify-center shadow-[0_0_12px_rgba(245,197,24,0.85)] group-hover:scale-105 transition-transform">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current">
+            <path d="M19 7h-2v2h-2v2h-3v2H9v2H7v2H4v2h16V7zM5 17v-2h2v-2h2v-2h3V9h2V7h2v10H5z"/>
+            <path d="M3 14l5-2v4l-5-2zm6-3l7-4v10l-7-4v-2z"/>
+          </svg>
+        </span>
+        <span class="flex flex-col items-start text-left leading-none">
+          <span class="font-hindi text-[11px] sm:text-xs font-bold text-white tracking-wide">हॉर्न ओके प्लीज</span>
+          <span id="hornTypeLabel" class="text-[7px] uppercase tracking-[0.22em] text-amber-300/90 font-semibold mt-0.5">HORN</span>
+        </span>
+      </button>
+
+      <!-- Inside Window Seat POV Button -->
+      <button
+        id="heroWindowSeatBtn"
+        title="Sit Inside at the Window Seat with Cutting Chai (Shortcut: W)"
+        class="horn-pill rounded-full pl-2.5 pr-3.5 py-1.5 flex items-center gap-2 cursor-pointer focus:outline-none group"
+      >
+        <span class="w-6 h-6 rounded-full bg-amber-500/20 border border-amber-400/60 text-amber-300 flex items-center justify-center group-hover:bg-amber-400 group-hover:text-slate-950 transition-colors">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current" stroke-width="2">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <line x1="12" y1="4" x2="12" y2="20" />
+            <line x1="3" y1="14" x2="21" y2="14" />
+          </svg>
+        </span>
+        <span class="flex flex-col items-start text-left leading-none">
+          <span class="font-hindi text-[11px] sm:text-xs font-bold text-amber-200 tracking-wide">खिड़की वाली सीट</span>
+          <span class="text-[7px] uppercase tracking-[0.18em] text-slate-300/80 font-semibold mt-0.5">INSIDE VIEW (W)</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 4A. EXTERIOR VIEW: ILLUSTRATED INDIAN RETRO BUS WITH HEADLIGHT BEAMS  -->
+  <!-- ===================================================================== -->
+  <main id="busStageWrapper" class="fixed inset-x-0 bottom-[19%] sm:bottom-[18%] z-20 flex flex-col items-center justify-center pointer-events-none px-2 transition-all duration-500">
+
+    <div id="busContainer" class="relative w-[95vw] max-w-[900px] pointer-events-auto">
+
+      <!-- Illustrated Indian Folk-Art Bus SVG with Warm Headlight Beams & Tail-Light Glow -->
+      <svg id="indianBusSvg" viewBox="0 0 1000 410" class="w-full h-auto overflow-visible drop-shadow-[0_12px_20px_rgba(0,0,0,0.58)]">
+        <defs>
+          <!-- Warm Roof Mustard Gradient -->
+          <linearGradient id="roofYellowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#f2ba49" />
+            <stop offset="45%" stop-color="#d59724" />
+            <stop offset="100%" stop-color="#a87014" />
+          </linearGradient>
+
+          <!-- Upper Body Warm Ochre Gradient -->
+          <linearGradient id="upperBodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#b8761c" />
+            <stop offset="50%" stop-color="#d4922a" />
+            <stop offset="100%" stop-color="#c27f20" />
+          </linearGradient>
+
+          <!-- Glowing Warm Cabin Interior Light -->
+          <linearGradient id="cabinInteriorGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fffae0" />
+            <stop offset="45%" stop-color="#fbd37c" />
+            <stop offset="100%" stop-color="#bf7d2c" />
+          </linearGradient>
+
+          <!-- Rear Red Tail-Light Soft Glow -->
+          <radialGradient id="tailLightGlowGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ef4444" stop-opacity="0.75" />
+            <stop offset="50%" stop-color="#dc2626" stop-opacity="0.28" />
+            <stop offset="100%" stop-color="#dc2626" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Metallic Wheel Rim Gradient -->
+          <radialGradient id="wheelRimGrad" cx="45%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#cbd5e1" />
+            <stop offset="55%" stop-color="#64748b" />
+            <stop offset="90%" stop-color="#334155" />
+            <stop offset="100%" stop-color="#1e293b" />
+          </radialGradient>
+
+          <!-- Tire Rubber Gradient -->
+          <radialGradient id="tireRubberGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="62%" stop-color="#0f141c" />
+            <stop offset="82%" stop-color="#222936" />
+            <stop offset="95%" stop-color="#121720" />
+            <stop offset="100%" stop-color="#090c10" />
+          </radialGradient>
+
+          <!-- Lower Body Clip Path -->
+          <clipPath id="lowerHullClip">
+            <path d="M168,215 L805,215 L805,318 C805,323 800,326 792,326 L168,326 Z" />
+          </clipPath>
+
+          <!-- Reusable Passenger Window Curtain & Seat Pattern -->
+          <g id="windowInteriorUnit">
+            <rect x="0" y="0" width="66" height="82" rx="10" fill="url(#cabinInteriorGlow)" />
+            <ellipse cx="33" cy="18" rx="22" ry="10" fill="#fffbeb" opacity="0.7" />
+            <rect x="28" y="8" width="10" height="74" fill="#9a6424" opacity="0.38" />
+            <rect x="6" y="46" width="22" height="36" rx="5" fill="#d6c29f" stroke="#8c6d46" stroke-width="1.2" />
+            <rect x="9" y="38" width="16" height="11" rx="3" fill="#e5d5b7" stroke="#8c6d46" stroke-width="1" />
+            <rect x="36" y="46" width="22" height="36" rx="5" fill="#d6c29f" stroke="#8c6d46" stroke-width="1.2" />
+            <rect x="39" y="38" width="16" height="11" rx="3" fill="#e5d5b7" stroke="#8c6d46" stroke-width="1" />
+            <g class="curtain-flutter">
+              <path d="M0,0 L66,0 L66,32 L0,32 Z" fill="#e87a24" />
+              <polygon points="2,32 33,4 64,32" fill="#29946e" />
+              <line x1="0" y1="32" x2="66" y2="32" stroke="#1e293b" stroke-width="2" />
+            </g>
+            <line x1="0" y1="54" x2="66" y2="54" stroke="#cbd5e1" stroke-width="2" opacity="0.85" />
+            <rect x="0" y="0" width="66" height="82" rx="10" fill="none" stroke="#334155" stroke-width="3.5" />
+            <rect x="2" y="2" width="62" height="78" rx="8" fill="none" stroke="#e2e8f0" stroke-width="1.5" opacity="0.85" />
+          </g>
+        </defs>
+
+        <!-- Under-Bus Clean Ground Shadow -->
+        <ellipse id="busRoadShadow" cx="485" cy="364" rx="342" ry="14" fill="#030508" opacity="0.68" />
+
+        <!-- =============================================================== -->
+        <!-- SUSPENSION CHASSIS GROUP (Slow, Gentle Highway Float)           -->
+        <!-- =============================================================== -->
+        <g id="busChassisGroup" transform="translate(0, 0) rotate(0, 500, 300)">
+
+          <!-- Rear Exhaust Tailpipe -->
+          <path d="M168,318 L150,322 L148,329 L168,326 Z" fill="#334155" stroke="#0f172a" stroke-width="1.5" />
+
+          <!-- Roof Luggage Rack & Curved Mustard Roof -->
+          <g stroke="#b8821e" stroke-width="3.5" fill="none">
+            <path d="M275,58 L585,58 L595,76 L268,76 Z" fill="#9c6c15" fill-opacity="0.35" />
+            <line x1="272" y1="66" x2="590" y2="66" stroke="#e0a838" stroke-width="2.5" />
+            <line x1="305" y1="58" x2="305" y2="76" />
+            <line x1="355" y1="58" x2="355" y2="76" />
+            <line x1="405" y1="58" x2="405" y2="76" />
+            <line x1="455" y1="58" x2="455" y2="76" />
+            <line x1="505" y1="58" x2="505" y2="76" />
+            <line x1="555" y1="58" x2="555" y2="76" />
+          </g>
+          <!-- Front Roof Vent Hatch -->
+          <path d="M635,66 L695,66 L702,76 L630,76 Z" fill="#c78d20" stroke="#e6b042" stroke-width="1.5" />
+
+          <!-- Main Curved Bus Roof Dome -->
+          <path d="M174,106 C174,82 190,74 225,74 L755,74 C782,74 796,84 800,106 Z" fill="url(#roofYellowGrad)" />
+          <rect x="166" y="103" width="640" height="8" rx="4" fill="#8f5d0e" />
+          <line x1="170" y1="105" x2="802" y2="105" stroke="#f7cb68" stroke-width="1.5" opacity="0.8" />
+
+          <!-- Clean Roof Marker Lamps (No external glare cones) -->
+          <g id="roofMarkerLights">
+            <circle cx="172" cy="88" r="4" fill="#ef4444" />
+            <ellipse cx="204" cy="96" rx="6" ry="3.5" fill="#fde68a" />
+            <ellipse cx="780" cy="98" rx="5.5" ry="3.5" fill="#fde68a" />
+          </g>
+
+          <!-- Main Bus Upper Body -->
+          <path d="M168,110 L802,110 L805,220 L168,220 Z" fill="url(#upperBodyGrad)" />
+
+          <!-- Decorative Riveted Panel Dots Between Windows -->
+          <g fill="#78470a" opacity="0.65">
+            <circle cx="250" cy="117" r="1.8" /><circle cx="315" cy="117" r="1.8" />
+            <circle cx="395" cy="117" r="1.8" /><circle cx="472" cy="117" r="1.8" />
+            <circle cx="550" cy="117" r="1.8" /><circle cx="626" cy="117" r="1.8" />
+            <circle cx="702" cy="117" r="1.8" />
+          </g>
+
+          <!-- Lower Hull Base with Clipped Hand-Painted Indian Truck/Bus Art -->
+          <g clip-path="url(#lowerHullClip)">
+            <rect x="168" y="215" width="640" height="115" fill="#d99326" />
+            <rect x="168" y="215" width="230" height="36" fill="#bd631d" />
+            <path d="M170,235 Q180,223 190,235 T210,235 T230,235 T250,235 T270,235 T290,235 T310,235 T330,235 T350,235 T370,235 T390,235" fill="none" stroke="#f5c518" stroke-width="3" />
+            <rect x="168" y="246" width="230" height="10" fill="#29946e" />
+            <rect x="168" y="256" width="230" height="12" fill="#d98224" />
+
+            <polygon points="168,326 168,268 355,256 320,326" fill="#b82925" />
+            <polygon points="168,326 325,258 370,265 245,326" fill="#1785a8" />
+            <polygon points="215,326 365,262 415,326" fill="#1d6e42" />
+
+            <polygon points="392,222 490,222 448,322 392,275" fill="#1785a8" />
+            <rect x="468" y="222" width="122" height="32" rx="6" fill="#d96b1f" stroke="#f5b841" stroke-width="2" />
+            <polygon points="590,222 695,222 620,268 585,254" fill="#1785a8" />
+            <polygon points="620,268 695,222 715,270 645,295" fill="#e68a20" />
+            <polygon points="575,260 648,292 602,326 575,326" fill="#c44d1c" />
+            <polygon points="595,326 655,258 745,326" fill="#1d6e42" />
+
+            <!-- Central Cream/White Lotus Art Panel -->
+            <rect x="488" y="264" width="90" height="54" rx="3" fill="#dce5e7" stroke="#c77723" stroke-width="3" />
+            <rect x="488" y="264" width="90" height="12" fill="#708090" opacity="0.45" />
+            <g transform="translate(533, 307)">
+              <path d="M-3,0 C-18,-2 -28,-10 -30,-16 C-20,-18 -10,-10 -3,0 Z" fill="#1785a8" />
+              <path d="M3,0 C18,-2 28,-10 30,-16 C20,-18 10,-10 3,0 Z" fill="#1785a8" />
+              <path d="M-2,0 C-14,-8 -20,-18 -16,-24 C-9,-20 -4,-10 -2,0 Z" fill="#b82925" />
+              <path d="M2,0 C14,-8 20,-18 16,-24 C9,-20 4,-10 2,0 Z" fill="#b82925" />
+              <path d="M0,2 C-8,-10 -8,-24 0,-30 C8,-24 8,-10 0,2 Z" fill="#c93b2b" />
+            </g>
+            <polygon points="445,326 482,254 495,254 468,326" fill="#b82925" />
+            <polygon points="468,326 488,288 488,326" fill="#b82925" />
+
+            <g transform="translate(298, 302)" fill="#e68a20">
+              <ellipse cx="0" cy="-7" rx="3" ry="6" />
+              <ellipse cx="6" cy="-3" rx="6" ry="3" transform="rotate(-25 6 -3)" />
+              <ellipse cx="-6" cy="-3" rx="6" ry="3" transform="rotate(25 -6 -3)" />
+              <circle cx="0" cy="-2" r="2.5" fill="#f5c518" />
+            </g>
+            <g transform="translate(625, 304)" fill="#e68a20">
+              <path d="M0,6 C-6,-4 -6,-14 0,-18 C6,-14 6,-4 0,6 Z" />
+              <path d="M0,6 C-10,0 -14,-8 -11,-13 C-6,-11 -2,-4 0,6 Z" />
+              <path d="M0,6 C10,0 14,-8 11,-13 C6,-11 2,-4 0,6 Z" />
+              <path d="M0,6 C-14,4 -20,-1 -18,-5 C-12,-5 -5,0 0,6 Z" fill="#f5c518" />
+              <path d="M0,6 C14,4 20,-1 18,-5 C12,-5 5,0 0,6 Z" fill="#f5c518" />
+            </g>
+
+            <rect x="714" y="215" width="58" height="112" fill="#137494" stroke="#0e4f66" stroke-width="2" />
+            <rect x="722" y="242" width="42" height="58" rx="4" fill="#d97724" stroke="#f5b841" stroke-width="1.5" />
+            <rect x="728" y="264" width="30" height="18" rx="2" fill="#9a3412" />
+          </g>
+
+          <!-- Mid-Body Silver/Grey Metallic Trim Molding Strip -->
+          <rect x="166" y="212" width="639" height="11" rx="2" fill="#94a3b8" stroke="#475569" stroke-width="1.5" />
+          <line x1="168" y1="216" x2="803" y2="216" stroke="#e2e8f0" stroke-width="2" />
+          <line x1="168" y1="220" x2="803" y2="220" stroke="#334155" stroke-width="1.5" />
+
+          <!-- Rear Passenger Door Vertical Outline -->
+          <rect x="255" y="128" width="52" height="190" rx="6" fill="none" stroke="#451a03" stroke-width="2.5" opacity="0.75" />
+          <g transform="translate(263, 136)">
+            <rect x="0" y="0" width="36" height="68" rx="7" fill="url(#cabinInteriorGlow)" stroke="#334155" stroke-width="3" />
+            <rect x="4" y="8" width="16" height="56" rx="2" fill="#78552b" opacity="0.55" />
+            <rect x="2" y="2" width="32" height="64" rx="5" fill="none" stroke="#e2e8f0" stroke-width="1" />
+          </g>
+
+          <!-- Glowing Passenger Windows (Click any window to enter Window Seat View!) -->
+          <g id="busWindowsRow" class="cursor-pointer">
+            <title>Click any window to sit inside at the Window Seat (W)</title>
+            <!-- Window 1 -->
+            <g transform="translate(186, 120)">
+              <rect x="0" y="0" width="54" height="82" rx="10" fill="url(#cabinInteriorGlow)" />
+              <g class="curtain-flutter">
+                <path d="M0,0 L54,0 L54,32 L0,32 Z" fill="#29946e" />
+                <polygon points="4,32 27,8 50,32" fill="#b45309" />
+              </g>
+              <rect x="8" y="45" width="38" height="35" rx="4" fill="#bda782" stroke="#785c38" stroke-width="1.2" />
+              <line x1="0" y1="54" x2="54" y2="54" stroke="#cbd5e1" stroke-width="2" />
+              <rect x="0" y="0" width="54" height="82" rx="10" fill="none" stroke="#334155" stroke-width="3.5" />
+              <rect x="2" y="2" width="50" height="78" rx="8" fill="none" stroke="#e2e8f0" stroke-width="1.2" />
+            </g>
+
+            <!-- Windows 2 to 6 -->
+            <use href="#windowInteriorUnit" x="319" y="120" />
+            <use href="#windowInteriorUnit" x="396" y="120" />
+            <use href="#windowInteriorUnit" x="473" y="120" />
+            <use href="#windowInteriorUnit" x="550" y="120" />
+            <use href="#windowInteriorUnit" x="627" y="120" />
+
+            <!-- Window Seat Silhouettes -->
+            <g class="passenger-sway" transform="translate(414, 154)" opacity="0.78">
+              <circle cx="0" cy="0" r="6" fill="#3b2618" />
+              <path d="M-8,24 C-8,10 8,10 8,24 Z" fill="#4a3222" />
+            </g>
+            <g class="passenger-sway" transform="translate(592, 155)" opacity="0.72">
+              <circle cx="0" cy="0" r="5.5" fill="#2e1e12" />
+              <path d="M-7,23 C-7,10 7,10 7,23 Z" fill="#3d281a" />
+            </g>
+
+            <!-- Window 7 -->
+            <g transform="translate(703, 120)">
+              <rect x="0" y="0" width="46" height="82" rx="9" fill="url(#cabinInteriorGlow)" />
+              <g class="curtain-flutter">
+                <path d="M0,0 L46,0 L46,32 L0,32 Z" fill="#e87a24" />
+                <polygon points="3,32 23,6 43,32" fill="#29946e" />
+              </g>
+              <rect x="8" y="46" width="28" height="34" rx="4" fill="#d6c29f" stroke="#8c6d46" stroke-width="1.2" />
+              <line x1="0" y1="54" x2="46" y2="54" stroke="#cbd5e1" stroke-width="2" />
+              <rect x="0" y="0" width="46" height="82" rx="9" fill="none" stroke="#334155" stroke-width="3.5" />
+              <rect x="2" y="2" width="42" height="78" rx="7" fill="none" stroke="#e2e8f0" stroke-width="1.2" />
+            </g>
+
+            <!-- Driver Cabin Door & Window -->
+            <g transform="translate(756, 120)">
+              <rect x="-3" y="-2" width="44" height="94" rx="6" fill="#1785a8" stroke="#0d4b61" stroke-width="2" />
+              <rect x="3" y="6" width="32" height="76" rx="5" fill="#fbd37c" stroke="#1e293b" stroke-width="2" />
+              <g class="passenger-sway">
+                <circle cx="13" cy="44" r="7" fill="#33261e" />
+                <path d="M5,78 C5,58 18,56 24,66 L28,78 Z" fill="#47362b" />
+              </g>
+              <line x1="22" y1="68" x2="33" y2="56" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round" />
+              <path d="M40,4 L49,10 L49,78 L40,82 Z" fill="#fef08a" opacity="0.7" stroke="#334155" stroke-width="2" />
+            </g>
+          </g>
+
+          <!-- Side Rear-View Mirror -->
+          <g stroke="#1e293b" stroke-width="2.5" fill="none">
+            <path d="M802,135 L820,135 L820,178 L804,178" />
+            <rect x="816" y="144" width="7" height="24" rx="2" fill="#334155" stroke="#0f172a" stroke-width="1.5" />
+          </g>
+
+          <!-- Soft warm headlamp glow and a restrained road beam; deliberately subtle. -->
+          <defs>
+            <radialGradient id="busHeadlampGlow"><stop offset="0" stop-color="#fff7c2" stop-opacity=".95"/><stop offset=".38" stop-color="#fbbf24" stop-opacity=".34"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
+            <linearGradient id="busHeadlightBeam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fde68a" stop-opacity=".22"/><stop offset="1" stop-color="#fde68a" stop-opacity="0"/></linearGradient>
+          </defs>
+          <path d="M800,250 L1045,340 L1055,365 L800,266 Z" fill="url(#busHeadlightBeam)" opacity=".55" />
+          <ellipse cx="802" cy="254" rx="27" ry="22" fill="url(#busHeadlampGlow)" opacity=".72" />
+          <!-- Rear tail-light halo -->
+          <ellipse id="tailLightHalo" cx="158" cy="272" rx="38" ry="20" fill="url(#tailLightGlowGrad)" opacity="0.72" />
+
+          <!-- Bumpers & Physical Lamp Fixtures -->
+          <rect x="158" y="308" width="18" height="22" rx="3" fill="#1e293b" stroke="#475569" stroke-width="1.5" />
+          <rect id="tailLampRed" x="163" y="264" width="6" height="16" rx="2" fill="#ef4444" />
+          <rect x="163" y="284" width="6" height="12" rx="2" fill="#f59e0b" />
+
+          <rect x="786" y="304" width="26" height="20" rx="4" fill="#d97706" stroke="#78350f" stroke-width="1.5" />
+          <rect x="798" y="246" width="8" height="18" rx="3" fill="#fffbeb" stroke="#92400e" stroke-width="1" />
+          <rect x="798" y="268" width="7" height="10" rx="2" fill="#fbbf24" />
+
+          <!-- Dark Wheel Arch Wells -->
+          <path d="M318,328 C318,266 416,266 416,328 Z" fill="#070a0f" stroke="#7c2d12" stroke-width="4" />
+          <path d="M666,328 C666,266 764,266 764,328 Z" fill="#070a0f" stroke="#14532d" stroke-width="4" />
+          <!-- Rear Mudflap -->
+          <line id="rearMudflap" x1="316" y1="322" x2="311" y2="352" stroke="#0f172a" stroke-width="5" stroke-linecap="round" />
+        </g>
+
+        <!-- =============================================================== -->
+        <!-- F. SMOOTH ROTATING WHEELS (REAR & FRONT)                        -->
+        <!-- =============================================================== -->
+        <g id="rearWheelMount" transform="translate(367, 326)">
+          <g id="rearWheelRotor">
+            <circle cx="0" cy="0" r="44" fill="url(#tireRubberGrad)" />
+            <circle cx="0" cy="0" r="41" fill="none" stroke="#1e293b" stroke-width="3" stroke-dasharray="12 8" />
+            <circle cx="0" cy="0" r="34" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="10 6" opacity="0.75" />
+            <circle cx="0" cy="0" r="24" fill="url(#wheelRimGrad)" stroke="#1e293b" stroke-width="2" />
+            <circle cx="0" cy="0" r="17" fill="#1e293b" />
+            <circle cx="0" cy="0" r="14" fill="url(#wheelRimGrad)" />
+            <line x1="-22" y1="0" x2="22" y2="0" stroke="#334155" stroke-width="3" />
+            <line x1="0" y1="-22" x2="0" y2="22" stroke="#334155" stroke-width="3" />
+            <g fill="#0f172a">
+              <circle cx="0" cy="-19" r="2.5" />
+              <circle cx="13.4" cy="-13.4" r="2.5" />
+              <circle cx="19" cy="0" r="2.5" />
+              <circle cx="13.4" cy="13.4" r="2.5" />
+              <circle cx="0" cy="19" r="2.5" />
+              <circle cx="-13.4" cy="13.4" r="2.5" />
+              <circle cx="-19" cy="0" r="2.5" />
+              <circle cx="-13.4" cy="-13.4" r="2.5" />
+            </g>
+            <circle cx="0" cy="0" r="6.5" fill="#94a3b8" stroke="#1e293b" stroke-width="1.5" />
+          </g>
+        </g>
+
+        <g id="frontWheelMount" transform="translate(715, 326)">
+          <g id="frontWheelRotor">
+            <circle cx="0" cy="0" r="44" fill="url(#tireRubberGrad)" />
+            <circle cx="0" cy="0" r="41" fill="none" stroke="#1e293b" stroke-width="3" stroke-dasharray="12 8" />
+            <circle cx="0" cy="0" r="34" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="10 6" opacity="0.75" />
+            <circle cx="0" cy="0" r="24" fill="url(#wheelRimGrad)" stroke="#1e293b" stroke-width="2" />
+            <circle cx="0" cy="0" r="17" fill="#1e293b" />
+            <circle cx="0" cy="0" r="14" fill="url(#wheelRimGrad)" />
+            <line x1="-22" y1="0" x2="22" y2="0" stroke="#334155" stroke-width="3" />
+            <line x1="0" y1="-22" x2="0" y2="22" stroke="#334155" stroke-width="3" />
+            <g fill="#0f172a">
+              <circle cx="0" cy="-19" r="2.5" />
+              <circle cx="13.4" cy="-13.4" r="2.5" />
+              <circle cx="19" cy="0" r="2.5" />
+              <circle cx="13.4" cy="13.4" r="2.5" />
+              <circle cx="0" cy="19" r="2.5" />
+              <circle cx="-13.4" cy="13.4" r="2.5" />
+              <circle cx="-19" cy="0" r="2.5" />
+              <circle cx="-13.4" cy="-13.4" r="2.5" />
+            </g>
+            <circle cx="0" cy="0" r="6.5" fill="#94a3b8" stroke="#1e293b" stroke-width="1.5" />
+          </g>
+        </g>
+      </svg>
+
+      <!-- Conductor Callout Caption Below the Bus ("Right right right! ↻") -->
+      <div class="flex items-center justify-center gap-3 -mt-2 sm:-mt-3">
+        <button
+          id="conductorQuoteBtn"
+          title="Click for next bus conductor callout"
+          class="pointer-events-auto group inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs sm:text-sm font-serif-italic italic text-slate-200/90 hover:text-amber-300 transition-colors drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] focus:outline-none"
+        >
+          <span id="conductorQuoteText">Right right right!</span>
+          <svg viewBox="0 0 24 24" class="w-3 h-3 stroke-current fill-none opacity-65 group-hover:rotate-180 transition-transform duration-300" stroke-width="2">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+            <path d="M21 3v5h-5" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- 4B. SUGGESTION 1: INSIDE "WINDOW SEAT" POV OVERLAY (खिड़की वाली सीट)    -->
+  <!-- ===================================================================== -->
+  <section
+    id="windowSeatInteriorOverlay"
+    class="fixed inset-0 z-20 pointer-events-none hidden items-center justify-center transition-opacity duration-500"
+  >
+    <!-- Dimly-lit Cozy Bus Cabin Frame Surrounding the Window -->
+    <div id="interiorCabinFrame" class="relative w-full h-full flex items-center justify-center">
+      <!-- SVG Interior Bus Window Frame, Curtain, Hindi Stencil Sign & Steaming Cutting Chai -->
+      <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+        <defs>
+          <!-- Mask so the center window opening is completely transparent to show the live highway canvas! -->
+          <mask id="windowCutoutMask">
+            <rect x="0" y="0" width="1440" height="900" fill="white" />
+            <rect x="270" y="135" width="900" height="505" rx="28" fill="black" />
+          </mask>
+
+          <linearGradient id="woodWallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#140d09" />
+            <stop offset="50%" stop-color="#23160f" />
+            <stop offset="100%" stop-color="#0d0806" />
+          </linearGradient>
+
+          <linearGradient id="brassTrimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#b47b22" />
+            <stop offset="50%" stop-color="#f5c518" />
+            <stop offset="100%" stop-color="#784d11" />
+          </linearGradient>
+
+          <linearGradient id="curtainClothGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#9a3412" />
+            <stop offset="50%" stop-color="#c2410c" />
+            <stop offset="100%" stop-color="#7c2d12" />
+          </linearGradient>
+
+          <linearGradient id="chaiLiquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#e09f5a" />
+            <stop offset="30%" stop-color="#c67d3b" />
+            <stop offset="100%" stop-color="#8c4f19" />
+          </linearGradient>
+        </defs>
+
+        <!-- Dark Teakwood & Sheet-Metal Bus Cabin Wall with Cutout Window -->
+        <rect x="0" y="0" width="1440" height="900" fill="url(#woodWallGrad)" mask="url(#windowCutoutMask)" />
+
+        <!-- Subtle Interior Rivets & Panel Lines -->
+        <g stroke="#3b261a" stroke-width="2" opacity="0.6">
+          <line x1="210" y1="0" x2="210" y2="900" />
+          <line x1="1230" y1="0" x2="1230" y2="900" />
+          <line x1="0" y1="680" x2="1440" y2="680" />
+        </g>
+
+        <!-- Vintage Hindi Stencil Plate Above Window: "खिड़की से हाथ बाहर न निकालें" -->
+        <g transform="translate(720, 96)">
+          <rect x="-255" y="-22" width="510" height="36" rx="6" fill="#1e1510" stroke="url(#brassTrimGrad)" stroke-width="1.8" />
+          <circle cx="-239" cy="-4" r="3" fill="#d97706" />
+          <circle cx="239" cy="-4" r="3" fill="#d97706" />
+          <text x="0" y="1" text-anchor="middle" fill="#fde68a" font-family="'Noto Sans Devanagari', sans-serif" font-size="12" font-weight="700" letter-spacing="0.35">
+            खिड़की वाली सीट • कृपया हाथ या सिर बाहर न निकालें
+          </text>
+        </g>
+
+        <!-- Outer Brass & Brushed Steel Window Frame -->
+        <rect x="262" y="127" width="916" height="521" rx="34" fill="none" stroke="#090604" stroke-width="14" />
+        <rect x="268" y="133" width="904" height="509" rx="29" fill="none" stroke="url(#brassTrimGrad)" stroke-width="5" />
+
+        <!-- Horizontal Sliding Window Aluminum Split Rail & Guard Bars -->
+        <line x1="270" y1="435" x2="1170" y2="435" stroke="#94a3b8" stroke-width="7" opacity="0.85" />
+        <line x1="270" y1="435" x2="1170" y2="435" stroke="#0f172a" stroke-width="1.5" />
+        <!-- 3 Classic Indian Bus Window Safety Guard Bars (Lower Section) -->
+        <line x1="270" y1="510" x2="1170" y2="510" stroke="#64748b" stroke-width="3.5" opacity="0.75" />
+        <line x1="270" y1="555" x2="1170" y2="555" stroke="#64748b" stroke-width="3.5" opacity="0.75" />
+        <line x1="270" y1="600" x2="1170" y2="600" stroke="#64748b" stroke-width="3.5" opacity="0.75" />
+
+        <!-- Subtle Glass Corner Sheen -->
+        <polygon points="285,145 430,145 285,320" fill="#ffffff" opacity="0.03" />
+
+        <!-- Left Drawn Folk-Art Bus Curtain (Gently sways when bus moves) -->
+        <g class="curtain-flutter" transform="translate(272, 136)">
+          <path d="M0,0 L165,0 C145,160 135,280 95,365 C65,420 25,470 0,502 Z" fill="url(#curtainClothGrad)" />
+          <!-- Traditional Rajasthani / Bus Curtain Geometric Trim -->
+          <path d="M0,45 L155,45" stroke="#f5c518" stroke-width="4" stroke-dasharray="10 6" />
+          <path d="M0,95 L145,95" stroke="#2dd4bf" stroke-width="3" />
+          <!-- Curtain Tie-Back Cord -->
+          <path d="M0,340 Q55,355 102,348" fill="none" stroke="#f5c518" stroke-width="5" stroke-linecap="round" />
+        </g>
+
+        <!-- Wooden Window Sill Ledge -->
+        <path d="M235,642 L1205,642 L1235,674 L205,674 Z" fill="#3b2313" stroke="#78471c" stroke-width="2" />
+        <rect x="205" y="672" width="1030" height="12" rx="3" fill="#24140a" />
+
+        <!-- Interactive Steaming "Cutting Chai" Glass in Brass Holder on Right Window Sill -->
+        <g id="cuttingChaiWidget" transform="translate(1055, 645)" class="pointer-events-auto cursor-pointer group">
+          <title>Click to take a warm sip of Highway Cutting Chai!</title>
+          <!-- Rising Steam Curls -->
+          <path class="chai-steam-1" d="M-8,-68 Q-16,-82 -4,-95 T-8,-118" fill="none" stroke="#f8fafc" stroke-width="2.5" stroke-linecap="round" opacity="0.6" />
+          <path class="chai-steam-2" d="M6,-65 Q14,-80 2,-94 T8,-115" fill="none" stroke="#f8fafc" stroke-width="2.5" stroke-linecap="round" opacity="0.5" />
+          <path class="chai-steam-3" d="M-1,-70 Q6,-86 -5,-100 T0,-122" fill="none" stroke="#fde68a" stroke-width="2" stroke-linecap="round" opacity="0.45" />
+
+          <!-- Brass Ring Holder Mounted on Sill -->
+          <ellipse cx="0" cy="4" rx="34" ry="8" fill="#1c110a" opacity="0.8" />
+          <path d="M-24,-22 L-19,2 C-19,7 19,7 19,2 L24,-22" fill="none" stroke="url(#brassTrimGrad)" stroke-width="4" />
+
+          <!-- Faceted Glass Cutting Chai Tumbler -->
+          <polygon points="-22,-62 22,-62 17,0 -17,0" fill="rgba(255, 255, 255, 0.18)" stroke="#e2e8f0" stroke-width="2" />
+          <!-- Hot Masala Chai Fill -->
+          <polygon points="-20,-46 20,-46 16,-2 -16,-2" fill="url(#chaiLiquidGrad)" />
+          <!-- Frothy Milk Rim on Top of Chai -->
+          <ellipse cx="0" cy="-46" rx="20" ry="4" fill="#fef3c7" />
+          <!-- Vertical Facet Ridges on Glass -->
+          <line x1="-10" y1="-58" x2="-8" y2="-3" stroke="#ffffff" stroke-width="1.2" opacity="0.45" />
+          <line x1="0" y1="-58" x2="0" y2="-3" stroke="#ffffff" stroke-width="1.2" opacity="0.3" />
+          <line x1="10" y1="-58" x2="8" y2="-3" stroke="#ffffff" stroke-width="1.2" opacity="0.45" />
+
+          <!-- Hover Label Badge -->
+          <g transform="translate(0, 22)">
+            <rect x="-48" y="-11" width="96" height="18" rx="9" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(245, 197, 24, 0.4)" stroke-width="1" />
+            <text x="0" y="1" text-anchor="middle" fill="#fde68a" font-family="'Poppins', sans-serif" font-size="9" font-weight="600">
+              ☕ Cutting Chai
+            </text>
+          </g>
+        </g>
+
+        <!-- Left Sill Button: Return to Outside Bus View -->
+        <g id="exitWindowSeatSvgBtn" transform="translate(380, 660)" class="pointer-events-auto cursor-pointer">
+          <rect x="-85" y="-14" width="170" height="26" rx="13" fill="rgba(15, 23, 42, 0.9)" stroke="url(#brassTrimGrad)" stroke-width="1.5" />
+          <text x="0" y="3" text-anchor="middle" fill="#f8fafc" font-family="'Poppins', sans-serif" font-size="10.5" font-weight="600">
+            ← Outside Bus View (W)
+          </text>
+        </g>
+      </svg>
+      <!-- Dedicated portrait composition; the wide desktop SVG is intentionally replaced on phones. -->
+      <div class="mobile-window-seat-ui" aria-label="Mobile Window Seat view">
+        <div class="mobile-seat-sign">खिड़की वाली सीट<span class="mobile-seat-caption">Window Seat • Night Highway</span></div>
+        <div class="mobile-seat-window" aria-hidden="true"></div>
+        <div class="mobile-seat-curtain left" aria-hidden="true"></div>
+        <div class="mobile-seat-curtain right" aria-hidden="true"></div>
+        <div class="mobile-seat-sill" aria-hidden="true"></div>
+        <div class="mobile-seat-cup" aria-hidden="true"><span class="steam"></span><span class="steam two"></span><span class="cup-body"></span><span class="cup-rim"></span><span class="cup-handle"></span></div>
+        <div class="mobile-seat-actions">
+          <button type="button" id="mobileExitWindowSeatBtn" class="mobile-seat-action">← Outside View</button>
+          <button type="button" id="mobileCuttingChaiBtn" class="mobile-seat-action chai-action">☕ Cutting Chai</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 5. LUXURY RETRO-MODERN BOTTOM MUSIC PLAYER DECK                       -->
+  <!-- ===================================================================== -->
+  <section id="playerDeckSection" class="fixed bottom-2.5 sm:bottom-3.5 inset-x-0 z-30 flex justify-center px-3">
+    <div class="luxury-player-deck w-full max-w-[465px] rounded-2xl px-4 py-3 flex flex-col gap-2.5 relative overflow-hidden">
+
+      <!-- Subtle Top Champagne-Gold Hairline -->
+      <div class="absolute top-0 inset-x-10 h-[1px] bg-gradient-to-r from-transparent via-[#f5c518]/60 to-transparent"></div>
+
+      <!-- TOP ROW: Vintage Album Sleeve + Spinning Vinyl + Track Info + Transport Controls -->
+      <div class="flex items-center justify-between gap-3">
+
+        <!-- Left: Retro Album Cover Sleeve with Peeking Spinning Golden Vinyl Disc -->
+        <div id="albumThumb" class="relative w-12 h-11 flex items-center shrink-0">
+          <!-- Peeking Spinning Vinyl Record -->
+          <div class="vinyl-disc absolute right-0 w-10 h-10 rounded-full bg-slate-950 border border-amber-300/30 shadow-[0_0_14px_rgba(0,0,0,0.9)] flex items-center justify-center">
+            <div class="absolute inset-1 rounded-full border border-white/10"></div>
+            <div class="absolute inset-2 rounded-full border border-white/10"></div>
+            <div class="w-3.5 h-3.5 rounded-full bg-gradient-to-br from-[#f5c518] to-amber-700 flex items-center justify-center">
+              <div class="w-1 h-1 rounded-full bg-slate-950"></div>
+            </div>
+          </div>
+
+          <!-- Warm Vintage Album Sleeve Card -->
+          <div class="relative z-10 w-9 h-9 rounded-lg bg-gradient-to-br from-amber-600 via-rose-900 to-slate-900 border border-white/20 shadow-md flex flex-col items-center justify-center overflow-hidden">
+            <div class="w-full h-1/2 bg-gradient-to-b from-amber-300/30 to-transparent"></div>
+            <span class="font-hindi text-[9px] font-bold text-amber-200 tracking-tighter -mt-2 drop-shadow">बस</span>
+            <span id="vinylLiveDot" class="w-1.5 h-1.5 rounded-full bg-slate-400 mt-0.5"></span>
+          </div>
+        </div>
+
+        <!-- Middle: Clean Song Title + Artist Subtitle + Delicate Golden Equalizer -->
+        <div class="flex-1 min-w-0">
+          <div id="trackTitleEl" class="text-xs sm:text-[13px] font-semibold text-white truncate leading-snug tracking-tight">
+            Bus Wala Official Playlist
+          </div>
+          <div class="flex items-center justify-between gap-2 mt-0.5">
+            <div id="trackArtistEl" class="text-[10px] text-slate-400 truncate leading-tight">
+              Your owner-curated YouTube Music playlist
+            </div>
+            <!-- Live Mini Golden Audio Visualizer Canvas -->
+            <canvas id="miniVisualizerCanvas" width="54" height="11" class="w-[54px] h-[11px] opacity-90 shrink-0"></canvas>
+          </div>
+        </div>
+
+        <!-- Right: Tactile Transport Controls (Prev, Illuminated Golden Play/Pause, Next) -->
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <!-- Previous Track Button -->
+          <button id="prevBtn" title="Open Official Playlist" class="w-7 h-7 rounded-full hover:bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus:outline-none">
+            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current">
+              <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+            </svg>
+          </button>
+
+          <!-- Prominent Golden Play / Pause Medallion Button -->
+          <button
+            id="playPauseBtn"
+            title="Open Official YouTube Playlist"
+            class="w-10 h-10 rounded-full bg-gradient-to-b from-[#ffe14d] to-[#eba80e] hover:from-[#fff078] hover:to-[#f5c518] active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_24px_rgba(245,197,24,0.65)] border border-amber-100/80 transition-all focus:outline-none cursor-pointer"
+          >
+            <svg id="playIcon" viewBox="0 0 24 24" class="w-4 h-4 fill-current ml-0.5">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg id="pauseIcon" viewBox="0 0 24 24" class="w-4 h-4 fill-current hidden">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          </button>
+
+          <!-- Next Track Button -->
+          <button id="nextBtn" title="Open Official Playlist" class="w-7 h-7 rounded-full hover:bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus:outline-none">
+            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current">
+              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MIDDLE ROW: Timestamp + Interactive Golden Progress Scrubber + Total Duration -->
+      <div class="flex items-center gap-2.5 px-0.5">
+        <span id="currentTimeEl" class="font-mono-clock text-[9.5px] text-slate-300 w-7">—:—</span>
+        <div class="relative flex-1 flex items-center">
+          <div id="seekProgressFill" class="absolute left-0 h-[4px] bg-gradient-to-r from-amber-500 to-[#f5c518] rounded-full pointer-events-none shadow-[0_0_8px_rgba(245,197,24,0.6)]" style="width: 2%;"></div>
+          <input
+            id="seekSlider"
+            type="range"
+            min="0"
+            max="1000"
+            value="0"
+            aria-label="Playlist launcher (progress is controlled by YouTube)"
+            class="bus-slider"
+          />
+        </div>
+        <span id="totalDurationEl" class="font-mono-clock text-[9.5px] text-slate-400 w-7 text-right">—:—</span>
+      </div>
+
+      <!-- BOTTOM ROW: Clean Action Bar (Tracks | Window Seat | Gear | Repeat | Volume) -->
+      <div class="flex items-center justify-between pt-1.5 border-t border-white/10 text-[10px] text-slate-300 gap-1.5">
+        <!-- Tracks Button -->
+        <button id="dockTracksBtn" class="px-2 py-1 rounded-lg hover:bg-white/10 flex items-center gap-1.5 text-slate-300 hover:text-amber-300 transition-colors focus:outline-none">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+          </svg>
+          <span>Tracks</span>
+        </button>
+
+        <!-- Window Seat Inside View Toggle -->
+        <button id="dockWindowSeatBtn" title="Toggle Inside Window Seat POV (Shortcut: W)" class="px-2 py-1 rounded-lg hover:bg-white/10 flex items-center gap-1.5 text-slate-300 hover:text-amber-300 transition-colors focus:outline-none">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current" stroke-width="2">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <line x1="12" y1="4" x2="12" y2="20" />
+          </svg>
+          <span id="dockWindowLabel">Window Seat</span>
+        </button>
+
+        <!-- Drive Speed / Gear Toggle -->
+        <button id="dockGearBtn" title="Switch Highway Gear (1x / 2x Express / Always Drive)" class="px-2 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-400/25 flex items-center gap-1 text-amber-300 transition-colors font-mono-clock text-[9.5px] focus:outline-none">
+          <span id="dockGearLabel">1x Cruise</span>
+        </button>
+
+        <!-- Repeat Toggle -->
+        <button id="repeatBtn" title="Toggle Repeat Track" class="px-1.5 py-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white flex items-center gap-1 transition-colors focus:outline-none">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current" stroke-width="2">
+            <polyline points="17 1 21 5 17 9" />
+            <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+            <polyline points="7 23 3 19 7 15" />
+            <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+          </svg>
+          <span class="hidden sm:inline text-[9.5px]">Repeat</span>
+        </button>
+
+        <!-- Volume Control -->
+        <div class="flex items-center gap-1.5 w-18 sm:w-22 pl-1">
+          <button id="muteBtn" title="Mute / Unmute" class="text-slate-300 hover:text-white transition-colors focus:outline-none">
+            <svg id="volIcon" viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-none stroke-current" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
+          </button>
+          <div class="relative flex-1 flex items-center">
+            <div id="volProgressFill" class="absolute left-0 h-[4px] bg-[#f5c518] rounded-full pointer-events-none" style="width: 80%;"></div>
+            <input
+              id="volumeSlider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.8"
+              aria-label="Volume"
+              class="bus-slider"
+            />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 6. PURANE GANE PLAYLIST & STREAMING RADIO DRAWER MODAL               -->
+  <!-- ===================================================================== -->
+  <div id="playlistModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-5 overflow-y-auto">
+    <div class="luxury-player-deck w-full max-w-2xl rounded-2xl p-4 sm:p-5 border border-amber-400/30 shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-t-0 border-b border-white/10">
+        <div>
+          <h2 class="font-hindi text-lg font-bold text-white flex items-center gap-2">
+            <span>बस वाला रेडियो</span>
+            <span class="text-xs font-normal font-sans px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">Purane Gane</span>
+          </h2>
+          <p class="text-[11px] text-slate-400">One owner-curated playlist • playback powered by YouTube</p>
+        </div>
+        <button id="closeModalBtn" class="w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-300 hover:text-white transition-colors">
+          ✕
+        </button>
+      </div>
+
+      <!-- Track List -->
+      <div id="playlistContainer" class="hidden" aria-hidden="true"></div>
+
+
+</div>
+  </div>
+
+      <!-- Official playlist player stays on the page; no popup needed to start music. -->
+      <section class="bus-inline-youtube-player" aria-labelledby="youtubeMusicHeading">
+        <div class="bus-inline-youtube-heading">
+          <div>
+            <h3 id="youtubeMusicHeading" class="text-sm font-semibold text-white flex items-center gap-2"><span class="inline-flex w-6 h-6 rounded-lg bg-red-500/15 border border-red-400/25 items-center justify-center text-red-300">▶</span> बस वाला • Official Playlist</h3>
+            <p class="text-[10px] text-slate-400 mt-1">Official playlist</p>
+          </div>
+          <span class="text-[10px] text-emerald-300">OWNER CURATED</span>
+        </div>
+        <div id="youtubeMusicStatus" class="bus-inline-youtube-status" role="status" aria-live="polite">Your official playlist is ready. Press play in the YouTube player.</div>
+        <div id="youtubeMusicEmbedWrap" class="bus-inline-youtube-frame">
+          <iframe id="youtubeMusicEmbed" title="Bus Wala official YouTube playlist" class="w-full h-full border-0" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLF0WTxd9MGeM&enablejsapi=1&playsinline=1" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+        
+      </section>
+
+  <!-- Hidden HTML5 Audio Element for Custom MP3 Files -->
+  <audio id="customAudioEl" crossorigin="anonymous"></audio>
+
+  <!-- ===================================================================== -->
+  <!-- 7. JAVASCRIPT: HIGHWAY ROUTES, WINDOW SEAT, ONCOMING TRUCKS & AUDIO   -->
+  <!-- ===================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      // -------------------------------------------------------------------
+      // 1. CURATED NOSTALGIC "PURANE GANE" PLAYLIST DATA
+      // -------------------------------------------------------------------
+      const PLAYLIST = [
+        {
+          id: 'chahat',
+          title: 'Bus Wala Official Playlist',
+          artist: 'Red Chillies Entertainment • 1995',
+          durationSec: 334,
+          tempoBpm: 108,
+          rootFreq: 261.63,
+          leadStyle: 'fluteStrings',
+          scale: [1, 9/8, 5/4, 4/3, 3/2, 27/16, 15/8, 2],
+          melody: [
+            { n: 4, d: 2 }, { n: 5, d: 1 }, { n: 4, d: 1 }, { n: 2, d: 2 }, { n: 1, d: 2 },
+            { n: 2, d: 2 }, { n: 4, d: 2 }, { n: 5, d: 3 }, { n: 4, d: 1 },
+            { n: 6, d: 2 }, { n: 7, d: 2 }, { n: 5, d: 2 }, { n: 4, d: 2 },
+            { n: 2, d: 2 }, { n: 1, d: 2 }, { n: 0, d: 4 }
+          ]
+        },
+        {
+          id: 'chhaiya',
+          title: 'Chhaiya Chhaiya | Sukhwinder Singh, Sapna Awasthi | Dil Se',
+          artist: 'A.R. Rahman Night Express • 1998',
+          durationSec: 412,
+          tempoBpm: 124,
+          rootFreq: 293.66,
+          leadStyle: 'fluteStrings',
+          scale: [1, 9/8, 6/5, 4/3, 3/2, 27/16, 9/5, 2],
+          melody: [
+            { n: 4, d: 2 }, { n: 4, d: 1 }, { n: 5, d: 1 }, { n: 4, d: 2 }, { n: 2, d: 2 },
+            { n: 3, d: 2 }, { n: 4, d: 2 }, { n: 2, d: 2 }, { n: 0, d: 2 },
+            { n: 0, d: 1 }, { n: 2, d: 1 }, { n: 4, d: 2 }, { n: 6, d: 2 }, { n: 5, d: 2 },
+            { n: 4, d: 2 }, { n: 2, d: 2 }, { n: 0, d: 4 }
+          ]
+        },
+        {
+          id: 'chookar',
+          title: 'Chookar Mere Man Ko | Kishore Kumar | Yaarana',
+          artist: 'Rajesh Roshan Golden Hits • 1981',
+          durationSec: 262,
+          tempoBpm: 98,
+          rootFreq: 277.18,
+          leadStyle: 'santoorGuitar',
+          scale: [1, 9/8, 5/4, 4/3, 3/2, 27/16, 15/8, 2],
+          melody: [
+            { n: 0, d: 2 }, { n: 2, d: 2 }, { n: 4, d: 3 }, { n: 5, d: 1 },
+            { n: 4, d: 2 }, { n: 2, d: 2 }, { n: 1, d: 4 },
+            { n: 1, d: 2 }, { n: 3, d: 2 }, { n: 5, d: 3 }, { n: 4, d: 1 },
+            { n: 2, d: 2 }, { n: 1, d: 2 }, { n: 0, d: 4 }
+          ]
+        },
+        {
+          id: 'sapno',
+          title: 'Mere Sapno Ki Rani Kab Aayegi Tu | Kishore Kumar | Aradhana',
+          artist: 'S.D. Burman Highway Harmonica • 1969',
+          durationSec: 300,
+          tempoBpm: 120,
+          rootFreq: 261.63,
+          leadStyle: 'fluteStrings',
+          scale: [1, 9/8, 5/4, 4/3, 3/2, 27/16, 9/5, 2],
+          melody: [
+            { n: 4, d: 2 }, { n: 2, d: 2 }, { n: 0, d: 2 }, { n: 2, d: 2 },
+            { n: 4, d: 3 }, { n: 5, d: 1 }, { n: 4, d: 4 },
+            { n: 5, d: 2 }, { n: 4, d: 2 }, { n: 2, d: 2 }, { n: 1, d: 2 },
+            { n: 2, d: 2 }, { n: 4, d: 2 }, { n: 0, d: 4 }
+          ]
+        },
+        {
+          id: 'musafir',
+          title: 'Musafir Hoon Yaaron | Kishore Kumar | Parichay',
+          artist: 'R.D. Burman Highway Classics • 1972',
+          durationSec: 278,
+          tempoBpm: 118,
+          rootFreq: 293.66,
+          leadStyle: 'santoorGuitar',
+          scale: [1, 9/8, 5/4, 4/3, 3/2, 27/16, 9/5, 2],
+          melody: [
+            { n: 0, d: 2 }, { n: 2, d: 2 }, { n: 4, d: 2 }, { n: 5, d: 2 },
+            { n: 4, d: 3 }, { n: 2, d: 1 }, { n: 1, d: 2 }, { n: 0, d: 2 },
+            { n: 4, d: 2 }, { n: 6, d: 2 }, { n: 5, d: 2 }, { n: 4, d: 2 },
+            { n: 2, d: 2 }, { n: 3, d: 1 }, { n: 2, d: 1 }, { n: 0, d: 4 }
+          ]
+        },
+        {
+          id: 'lagjagale',
+          title: 'Lag Ja Gale Se Phir Yeh Haseen Raat | Lata Mangeshkar',
+          artist: 'Madan Mohan Midnight Melody • 1964',
+          durationSec: 258,
+          tempoBpm: 90,
+          rootFreq: 246.94,
+          leadStyle: 'fluteStrings',
+          scale: [1, 9/8, 5/4, 4/3, 3/2, 27/16, 15/8, 2],
+          melody: [
+            { n: 0, d: 3 }, { n: 4, d: 1 }, { n: 3, d: 2 }, { n: 2, d: 2 },
+            { n: 1, d: 3 }, { n: 2, d: 1 }, { n: 4, d: 4 },
+            { n: 5, d: 2 }, { n: 6, d: 2 }, { n: 4, d: 2 }, { n: 2, d: 2 },
+            { n: 1, d: 2 }, { n: 0, d: 4 }
+          ]
+        }
+      ];
+
+      // 3 Scenic Night Highway Routes (Controlled by the top-right Highway button!)
+      const HIGHWAY_ROUTES = [
+        {
+          code: 'NH-48',
+          name: 'NH-48 • Desert Moonlit Highway',
+          skyTop: '#070b14',
+          skyMid: '#121c2c',
+          skyHorizon: '#2c2b3c',
+          farMtn: '#1b1926',
+          midMtnTop: '#272130',
+          midMtnBot: '#3b2e37',
+          terrainTop: '#4a3d36',
+          terrainMid: '#635247',
+          terrainBot: '#4c3e35',
+          milestones: [
+            { hi: 'जयपुर', km: 142 },
+            { hi: 'उदयपुर', km: 88 },
+            { hi: 'चाय ढाबा', km: 2 },
+            { hi: 'अहमदाबाद', km: 195 }
+          ]
+        },
+        {
+          code: 'NH-66',
+          name: 'NH-66 • Western Ghats Misty Pass',
+          skyTop: '#050e14',
+          skyMid: '#0d212c',
+          skyHorizon: '#1c353d',
+          farMtn: '#112229',
+          midMtnTop: '#162d33',
+          midMtnBot: '#223d3c',
+          terrainTop: '#23382c',
+          terrainMid: '#2d4736',
+          terrainBot: '#1c2e24',
+          milestones: [
+            { hi: 'लोनावला', km: 34 },
+            { hi: 'पुणे', km: 68 },
+            { hi: 'घाट ढाबा', km: 4 },
+            { hi: 'महाबळेश्वर', km: 112 }
+          ]
+        },
+        {
+          code: 'NH-17',
+          name: 'NH-17 • Konkan Starlight Route',
+          skyTop: '#060818',
+          skyMid: '#111633',
+          skyHorizon: '#242348',
+          farMtn: '#16162e',
+          midMtnTop: '#1f1d3d',
+          midMtnBot: '#2e2747',
+          terrainTop: '#332d42',
+          terrainMid: '#453b52',
+          terrainBot: '#2c2638',
+          milestones: [
+            { hi: 'रत्नागिरी', km: 76 },
+            { hi: 'गोवा', km: 164 },
+            { hi: 'कोकण ढाबा', km: 3 },
+            { hi: 'अलीबाग', km: 52 }
+          ]
+        }
+      ];
+
+      const CONDUCTOR_QUOTES = [
+        'Right right right!',
+        'Jaane do ustad, rasta bilkul saaf hai!',
+        'Window seat, thandi hawa aur 90s ke purane gane...',
+        'Agla halt: Highway Raju Chai Dhaba • 10 minute!',
+        'Chalo aage badho, piche poori seat khali hai!',
+        'Use Dipper at Night • Horn OK Please!'
+      ];
+
+      // -------------------------------------------------------------------
+      // 2. APPLICATION & BUS PHYSICS STATE
+      // -------------------------------------------------------------------
+      let currentTrackIdx = 0;
+      let currentRouteIdx = 0;
+      let isPlaying = false;
+      let isRepeat = false;
+      let isWindowSeatView = false;
+      let masterVol = 0.8;
+      let isMuted = false;
+      let highwayAmbientOn = false;
+      let monsoonRainOn = false;
+      let currentTimeSec = 5;
+      let lastFrameTime = performance.now();
+      let quoteIdx = 0;
+      let hornMelodyVariant = 0;
+
+      // Bus Motion & Gear Modes:
+      // 0 = 1x Cruise (64 km/h when playing, 0 when paused)
+      // 1 = 2x Express (92 km/h when playing, 0 when paused)
+      // 2 = Always Drive (72 km/h even when music is paused)
+      let gearMode = 0;
+      let busVelocity = 0.4;
+      let targetVelocity = 0.0;
+      let hornSpeedBoost = 0;
+      let wheelRotationDeg = 0;
+      let chassisPitchDeg = 0;
+      let exhaustParticles = [];
+      let shootingStars = [];
+      let raindrops = [];
+      let highBeamActive = false;
+
+      // Web Audio API Context & Nodes
+      let audioCtx = null;
+      let masterGain = null;
+      let analyser = null;
+      let reverbNode = null;
+      let ambientBusGain = null;
+      let rainAudioGain = null;
+      let mediaElementSource = null;
+      let stepTimer = null;
+      let melodyStepIdx = 0;
+      let ticksLeftInNote = 0;
+      let beatStep = 0;
+
+      // DOM Elements
+      const canvas = document.getElementById('highwaySceneCanvas');
+      const ctx = canvas.getContext('2d');
+      const miniVisCanvas = document.getElementById('miniVisualizerCanvas');
+      const miniVisCtx = miniVisCanvas.getContext('2d');
+
+      const heroHeaderSection = document.getElementById('heroHeaderSection');
+      const busStageWrapper = document.getElementById('busStageWrapper');
+      const windowSeatInteriorOverlay = document.getElementById('windowSeatInteriorOverlay');
+      const interiorCabinFrame = document.getElementById('interiorCabinFrame');
+      const cuttingChaiWidget = document.getElementById('cuttingChaiWidget');
+      const exitWindowSeatSvgBtn = document.getElementById('exitWindowSeatSvgBtn');
+      const mobileExitWindowSeatBtn = document.getElementById('mobileExitWindowSeatBtn');
+      const mobileCuttingChaiBtn = document.getElementById('mobileCuttingChaiBtn');
+      const busWindowsRow = document.getElementById('busWindowsRow');
+
+      const busChassisGroup = document.getElementById('busChassisGroup');
+      const busRoadShadow = document.getElementById('busRoadShadow');
+      const rearWheelRotor = document.getElementById('rearWheelRotor');
+      const frontWheelRotor = document.getElementById('frontWheelRotor');
+      const rearWheelMount = document.getElementById('rearWheelMount');
+      const frontWheelMount = document.getElementById('frontWheelMount');
+      const rearMudflap = document.getElementById('rearMudflap');
+
+      const hornBtn = document.getElementById('hornBtn');
+      const hornTypeLabel = document.getElementById('hornTypeLabel');
+      const heroWindowSeatBtn = document.getElementById('heroWindowSeatBtn');
+      const topWindowSeatBtn = document.getElementById('topWindowSeatBtn');
+      const dockWindowSeatBtn = document.getElementById('dockWindowSeatBtn');
+
+      const conductorQuoteBtn = document.getElementById('conductorQuoteBtn');
+      const conductorQuoteText = document.getElementById('conductorQuoteText');
+      const highwayToast = document.getElementById('highwayToast');
+
+      const gearShiftBtn = document.getElementById('gearShiftBtn');
+      const dockGearBtn = document.getElementById('dockGearBtn');
+      const dockGearLabel = document.getElementById('dockGearLabel');
+      const speedometerText = document.getElementById('speedometerText');
+      const gearModeLabel = document.getElementById('gearModeLabel');
+      const speedStatusDot = document.getElementById('speedStatusDot');
+
+      const playPauseBtn = document.getElementById('playPauseBtn');
+      const playIcon = document.getElementById('playIcon');
+      const pauseIcon = document.getElementById('pauseIcon');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const trackTitleEl = document.getElementById('trackTitleEl');
+      const trackArtistEl = document.getElementById('trackArtistEl');
+      const currentTimeEl = document.getElementById('currentTimeEl');
+      const totalDurationEl = document.getElementById('totalDurationEl');
+      const seekSlider = document.getElementById('seekSlider');
+      const seekProgressFill = document.getElementById('seekProgressFill');
+      const volumeSlider = document.getElementById('volumeSlider');
+      const volProgressFill = document.getElementById('volProgressFill');
+      const muteBtn = document.getElementById('muteBtn');
+      const vinylLiveDot = document.getElementById('vinylLiveDot');
+
+      const dockTracksBtn = document.getElementById('dockTracksBtn');
+      const topPlaylistsBtn = document.getElementById('topPlaylistsBtn');
+      const ambientToggleBtn = document.getElementById('ambientToggleBtn');
+      const ambientBtnLabel = document.getElementById('ambientBtnLabel');
+      const rainToggleBtn = document.getElementById('rainToggleBtn');
+      const rainBtnLabel = document.getElementById('rainBtnLabel');
+      const repeatBtn = document.getElementById('repeatBtn');
+      const playlistModal = document.getElementById('playlistModal');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const playlistContainer = document.getElementById('playlistContainer');
+      const customAudioEl = document.getElementById('customAudioEl');
+      // Official playlist is fixed for all visitors.
+      const youtubeMusicEmbed = document.getElementById('youtubeMusicEmbed');
+      const youtubeMusicEmbedWrap = document.getElementById('youtubeMusicEmbedWrap');
+      const youtubeMusicStatus = document.getElementById('youtubeMusicStatus');
+
+      // -------------------------------------------------------------------
+      // 3. SIMPLE ELEGANT CLOCK WITH LIVE DAY & DATE + TOAST HELPER
+      // -------------------------------------------------------------------
+      const DAYS_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      function updateClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        const mins = String(now.getMinutes()).padStart(2, '0');
+        const secs = String(now.getSeconds()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12 || 12;
+
+        document.getElementById('clockHourMin').textContent = `${hours}:${mins}`;
+        document.getElementById('clockSec').textContent = secs;
+        document.getElementById('clockAmPm').textContent = ampm;
+
+        const dayStr = DAYS_NAMES[now.getDay()];
+        const dateNum = now.getDate();
+        const monthStr = MONTHS_SHORT[now.getMonth()];
+        const yearNum = now.getFullYear();
+        document.getElementById('clockDayDate').textContent = `${dayStr}, ${dateNum} ${monthStr} ${yearNum}`;
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // The live online counter uses Supabase Realtime Presence.
+
+      let toastTimeout = null;
+      function showHighwayToast(msg) {
+        highwayToast.textContent = msg;
+        highwayToast.style.opacity = '1';
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          highwayToast.style.opacity = '0';
+        }, 3200);
+      }
+
+      // -------------------------------------------------------------------
+      // 4. WEB AUDIO API ENGINE (SYNTH, HORN, DOPPLER TRUCK, CHAI SIP)
+      // -------------------------------------------------------------------
+      function initAudio() {
+        if (!audioCtx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioCtx();
+
+          masterGain = audioCtx.createGain();
+          masterGain.gain.value = isMuted ? 0 : masterVol;
+
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 64;
+          analyser.smoothingTimeConstant = 0.78;
+
+          reverbNode = createReverbImpulse(audioCtx, 2.2, 2.2);
+          const reverbWet = audioCtx.createGain();
+          reverbWet.gain.value = 0.32;
+
+          masterGain.connect(analyser);
+          reverbNode.connect(reverbWet);
+          reverbWet.connect(masterGain);
+          analyser.connect(audioCtx.destination);
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      }
+
+      function createReverbImpulse(ac, seconds, decay) {
+        const conv = ac.createConvolver();
+        const rate = ac.sampleRate;
+        const len = rate * seconds;
+        const buf = ac.createBuffer(2, len, rate);
+        for (let c = 0; c < 2; c++) {
+          const ch = buf.getChannelData(c);
+          for (let i = 0; i < len; i++) {
+            ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+          }
+        }
+        conv.buffer = buf;
+        return conv;
+      }
+
+      function playAirBrakeHiss() {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const bufSize = Math.floor(audioCtx.sampleRate * 0.4);
+        const noiseBuf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+        const data = noiseBuf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 1.8);
+        }
+        const src = audioCtx.createBufferSource();
+        src.buffer = noiseBuf;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2600, now);
+        filter.Q.value = 1.6;
+
+        const env = audioCtx.createGain();
+        env.gain.setValueAtTime(0.11, now);
+        env.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+        src.connect(filter);
+        filter.connect(env);
+        env.connect(masterGain);
+        src.start(now);
+      }
+
+      function playGearShiftRev() {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const env = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(50, now);
+        osc.frequency.exponentialRampToValueAtTime(76, now + 0.25);
+        osc.frequency.exponentialRampToValueAtTime(58, now + 0.55);
+
+        filter.type = 'lowpass';
+        filter.frequency.value = 170;
+
+        env.gain.setValueAtTime(0.001, now);
+        env.gain.linearRampToValueAtTime(0.08, now + 0.08);
+        env.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+        osc.connect(filter);
+        filter.connect(env);
+        env.connect(masterGain);
+        osc.start(now);
+        osc.stop(now + 0.58);
+      }
+
+      // Subtle Glass Clink & Sip Sound for Cutting Chai
+      function playChaiSipSound() {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const env = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2450, now);
+        osc.frequency.exponentialRampToValueAtTime(2900, now + 0.08);
+        env.gain.setValueAtTime(0.08, now);
+        env.gain.exponentialRampToValueAtTime(0.0008, now + 0.22);
+        osc.connect(env);
+        env.connect(masterGain);
+        env.connect(reverbNode);
+        osc.start(now);
+        osc.stop(now + 0.24);
+      }
+
+      // Musical Indian Bus Horn ("हॉर्न ओके प्लीज")
+      function playIndianBusHorn() {
+        initAudio();
+        const now = audioCtx.currentTime;
+
+        const hornMelodies = [
+          [
+            { f: 523.25, t: 0.00, d: 0.14 },
+            { f: 587.33, t: 0.15, d: 0.14 },
+            { f: 622.25, t: 0.30, d: 0.22 },
+            { f: 587.33, t: 0.54, d: 0.14 },
+            { f: 523.25, t: 0.70, d: 0.14 },
+            { f: 622.25, t: 0.86, d: 0.36 }
+          ],
+          [
+            { f: 440.0, t: 0.00, d: 0.12 },
+            { f: 554.37, t: 0.13, d: 0.12 },
+            { f: 659.25, t: 0.26, d: 0.12 },
+            { f: 880.0, t: 0.39, d: 0.22 },
+            { f: 659.25, t: 0.63, d: 0.12 },
+            { f: 880.0, t: 0.77, d: 0.35 }
+          ],
+          [
+            { f: 370.0, t: 0.00, d: 0.22 },
+            { f: 466.16, t: 0.00, d: 0.22 },
+            { f: 370.0, t: 0.28, d: 0.42 },
+            { f: 466.16, t: 0.28, d: 0.42 }
+          ]
+        ];
+
+        const hornLabels = ['NAGIN HORN', 'SHAHI HORN', 'AIR HORN'];
+        const chosen = hornMelodies[hornMelodyVariant % hornMelodies.length];
+        hornTypeLabel.textContent = hornLabels[hornMelodyVariant % hornLabels.length];
+        hornMelodyVariant++;
+
+        chosen.forEach((note) => {
+          const osc1 = audioCtx.createOscillator();
+          const osc2 = audioCtx.createOscillator();
+          const filter = audioCtx.createBiquadFilter();
+          const env = audioCtx.createGain();
+
+          osc1.type = 'sawtooth';
+          osc2.type = 'square';
+          osc1.frequency.setValueAtTime(note.f, now + note.t);
+          osc2.frequency.setValueAtTime(note.f * 1.004, now + note.t);
+
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(note.f * 2.4, now + note.t);
+          filter.Q.value = 2.4;
+
+          env.gain.setValueAtTime(0.001, now + note.t);
+          env.gain.linearRampToValueAtTime(0.20, now + note.t + 0.02);
+          env.gain.setValueAtTime(0.18, now + note.t + note.d - 0.03);
+          env.gain.exponentialRampToValueAtTime(0.0008, now + note.t + note.d + 0.08);
+
+          osc1.connect(filter);
+          osc2.connect(filter);
+          filter.connect(env);
+          env.connect(masterGain);
+          env.connect(reverbNode);
+
+          osc1.start(now + note.t);
+          osc2.start(now + note.t);
+          osc1.stop(now + note.t + note.d + 0.09);
+          osc2.stop(now + note.t + note.d + 0.09);
+        });
+
+        hornBtn.classList.add('honking');
+        highBeamActive = true; // horn animation remains, without road-glare beams
+        hornSpeedBoost = 0.65;
+        chassisPitchDeg = -0.35; // Gentle cushioned squat
+        spawnExhaustBurst(4);
+        cycleConductorQuote();
+
+        setTimeout(() => {
+          hornBtn.classList.remove('honking');
+          highBeamActive = false;
+        }, 850);
+      }
+
+      // 90s Bollywood Expressive Lead & Santoor Synthesizer
+      let prevLeadFreq = null;
+
+      function play90sLeadNote(freq, durationSec, style = 'fluteStrings') {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const env = audioCtx.createGain();
+
+        if (style === 'santoorGuitar') {
+          osc1.type = 'triangle';
+          osc2.type = 'sine';
+          osc1.frequency.setValueAtTime(freq, now);
+          osc2.frequency.setValueAtTime(freq * 2, now);
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(freq * 6, now);
+
+          env.gain.setValueAtTime(0.001, now);
+          env.gain.linearRampToValueAtTime(0.18, now + 0.012);
+          env.gain.exponentialRampToValueAtTime(0.0008, now + durationSec * 1.15);
+        } else {
+          osc1.type = 'sawtooth';
+          osc2.type = 'triangle';
+
+          const startF = prevLeadFreq ? prevLeadFreq : freq * 0.985;
+          osc1.frequency.setValueAtTime(startF, now);
+          osc1.frequency.exponentialRampToValueAtTime(freq, now + 0.09);
+          osc2.frequency.setValueAtTime(freq * 2.002, now);
+
+          const vib = audioCtx.createOscillator();
+          const vibGain = audioCtx.createGain();
+          vib.frequency.value = 5.4;
+          vibGain.gain.value = freq * 0.011;
+          vib.connect(vibGain);
+          vibGain.connect(osc1.frequency);
+          vib.start(now);
+          vib.stop(now + durationSec + 0.1);
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(freq * 4.5, now);
+          filter.Q.value = 1.8;
+
+          env.gain.setValueAtTime(0.001, now);
+          env.gain.linearRampToValueAtTime(0.15, now + 0.08);
+          env.gain.setValueAtTime(0.13, now + Math.max(0.09, durationSec - 0.12));
+          env.gain.exponentialRampToValueAtTime(0.0008, now + durationSec + 0.08);
+        }
+
+        prevLeadFreq = freq;
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(env);
+        env.connect(masterGain);
+        env.connect(reverbNode);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + durationSec + 0.12);
+        osc2.stop(now + durationSec + 0.12);
+      }
+
+      function play90sBackingPad(rootFreq, durationSec) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        [rootFreq * 0.5, rootFreq * 0.75, rootFreq].forEach((f, idx) => {
+          const osc = audioCtx.createOscillator();
+          const filter = audioCtx.createBiquadFilter();
+          const env = audioCtx.createGain();
+
+          osc.type = idx === 0 ? 'sine' : 'sawtooth';
+          osc.frequency.setValueAtTime(f, now);
+
+          filter.type = 'lowpass';
+          filter.frequency.value = 650;
+
+          const peak = idx === 0 ? 0.13 : 0.045;
+          env.gain.setValueAtTime(0.001, now);
+          env.gain.linearRampToValueAtTime(peak, now + 0.25);
+          env.gain.exponentialRampToValueAtTime(0.0008, now + durationSec);
+
+          osc.connect(filter);
+          filter.connect(env);
+          env.connect(masterGain);
+          env.connect(reverbNode);
+
+          osc.start(now);
+          osc.stop(now + durationSec + 0.05);
+        });
+      }
+
+      function playDholakBeat(type, rootFreq) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        if (type === 'dha' || type === 'ghe') {
+          const bassOsc = audioCtx.createOscillator();
+          const bassEnv = audioCtx.createGain();
+          bassOsc.type = 'sine';
+          bassOsc.frequency.setValueAtTime(92, now);
+          bassOsc.frequency.exponentialRampToValueAtTime(128, now + 0.07);
+          bassOsc.frequency.exponentialRampToValueAtTime(68, now + 0.28);
+
+          bassEnv.gain.setValueAtTime(0.001, now);
+          bassEnv.gain.linearRampToValueAtTime(0.20, now + 0.012);
+          bassEnv.gain.exponentialRampToValueAtTime(0.001, now + 0.30);
+
+          bassOsc.connect(bassEnv);
+          bassEnv.connect(masterGain);
+          bassOsc.start(now);
+          bassOsc.stop(now + 0.32);
+        }
+
+        if (type === 'dha' || type === 'na' || type === 'ti') {
+          const chantiOsc = audioCtx.createOscillator();
+          const chantiEnv = audioCtx.createGain();
+          chantiOsc.type = 'triangle';
+          chantiOsc.frequency.setValueAtTime(rootFreq * (type === 'ti' ? 1.5 : 2.0), now);
+
+          chantiEnv.gain.setValueAtTime(0.001, now);
+          chantiEnv.gain.linearRampToValueAtTime(0.09, now + 0.006);
+          chantiEnv.gain.exponentialRampToValueAtTime(0.0008, now + 0.18);
+
+          chantiOsc.connect(chantiEnv);
+          chantiEnv.connect(masterGain);
+          chantiEnv.connect(reverbNode);
+          chantiOsc.start(now);
+          chantiOsc.stop(now + 0.20);
+        }
+      }
+
+      // -------------------------------------------------------------------
+      // 5. SCENIC HIGHWAY ROUTE SWITCHER & MONSOON RAIN
+      // -------------------------------------------------------------------
+      function cycleHighwayRoute() {
+        initAudio();
+        currentRouteIdx = (currentRouteIdx + 1) % HIGHWAY_ROUTES.length;
+        const route = HIGHWAY_ROUTES[currentRouteIdx];
+
+        ambientBtnLabel.textContent = route.code;
+        showHighwayToast(`Route: ${route.name}`);
+
+        // Also ensure soothing highway engine + night wind hum is active when cycling routes
+        if (!highwayAmbientOn) {
+          highwayAmbientOn = true;
+          ambientBusGain = audioCtx.createGain();
+          ambientBusGain.gain.value = 0.055;
+
+          const engineOsc = audioCtx.createOscillator();
+          const engineFilter = audioCtx.createBiquadFilter();
+          engineOsc.type = 'sawtooth';
+          engineOsc.frequency.value = 46;
+          engineFilter.type = 'lowpass';
+          engineFilter.frequency.value = 135;
+
+          engineOsc.connect(engineFilter);
+          engineFilter.connect(ambientBusGain);
+          ambientBusGain.connect(masterGain);
+          engineOsc.start();
+          ambientBusGain._osc = engineOsc;
+        }
+      }
+
+      function toggleMonsoonRain() {
+        initAudio();
+        monsoonRainOn = !monsoonRainOn;
+
+        if (monsoonRainOn) {
+          rainBtnLabel.textContent = 'Rain: ON';
+          rainBtnLabel.classList.add('text-cyan-300');
+          document.getElementById('rainIconBox').classList.add('border-cyan-400/60', 'bg-cyan-500/15');
+          showHighwayToast('Monsoon Night Rain: ON 🌧️');
+
+          // Original Soothing 2-Second Paul Kellet Pink-Noise Rain Buffer + 1100 Hz Lowpass Filter
+          const bufSize = audioCtx.sampleRate * 2;
+          const rainBuf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+          const out = rainBuf.getChannelData(0);
+          let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+          for (let i = 0; i < bufSize; i++) {
+            const white = Math.random() * 2 - 1;
+            b0 = 0.99886 * b0 + white * 0.0555179;
+            b1 = 0.99332 * b1 + white * 0.0750759;
+            b2 = 0.96900 * b2 + white * 0.1538520;
+            b3 = 0.86650 * b3 + white * 0.3104856;
+            b4 = 0.55000 * b4 + white * 0.5329522;
+            b5 = -0.7616 * b5 - white * 0.0168980;
+            out[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.025;
+            b6 = white * 0.115926;
+          }
+          const rainSrc = audioCtx.createBufferSource();
+          rainSrc.buffer = rainBuf;
+          rainSrc.loop = true;
+
+          const rainFilter = audioCtx.createBiquadFilter();
+          rainFilter.type = 'lowpass';
+          rainFilter.frequency.value = 1100;
+
+          rainAudioGain = audioCtx.createGain();
+          rainAudioGain.gain.value = 0.18;
+
+          rainSrc.connect(rainFilter);
+          rainFilter.connect(rainAudioGain);
+          rainAudioGain.connect(masterGain);
+          rainSrc.start();
+          rainAudioGain._src = rainSrc;
+        } else {
+          rainBtnLabel.textContent = 'Baarish';
+          rainBtnLabel.classList.remove('text-cyan-300');
+          document.getElementById('rainIconBox').classList.remove('border-cyan-400/60', 'bg-cyan-500/15');
+          showHighwayToast('Monsoon Rain: OFF');
+          if (rainAudioGain) {
+            try { rainAudioGain._src.stop(); } catch (e) {}
+            rainAudioGain.disconnect();
+            rainAudioGain = null;
+          }
+        }
+      }
+
+      // -------------------------------------------------------------------
+      // 6. INSIDE "WINDOW SEAT" POV TOGGLE
+      // -------------------------------------------------------------------
+      function toggleWindowSeatView() {
+        isWindowSeatView = !isWindowSeatView;
+
+        if (isWindowSeatView) {
+          busStageWrapper.classList.add('opacity-0', 'scale-110', 'pointer-events-none');
+          setTimeout(() => {
+            if (isWindowSeatView) busStageWrapper.classList.add('hidden');
+          }, 300);
+
+          windowSeatInteriorOverlay.classList.remove('hidden');
+          windowSeatInteriorOverlay.classList.add('flex');
+          heroHeaderSection.classList.add('opacity-0', 'pointer-events-none');
+
+          document.getElementById('windowSeatBtnLabel').textContent = 'Outside';
+          document.getElementById('windowSeatIconBox').classList.add('border-amber-400', 'bg-amber-500/20');
+          document.getElementById('dockWindowLabel').textContent = 'Outside View';
+          document.getElementById('dockWindowSeatBtn').classList.add('text-amber-300');
+          showHighwayToast('खिड़की वाली सीट (Inside Window Seat View) • Press W to switch back');
+        } else {
+          busStageWrapper.classList.remove('hidden');
+          requestAnimationFrame(() => {
+            busStageWrapper.classList.remove('opacity-0', 'scale-110', 'pointer-events-none');
+          });
+
+          windowSeatInteriorOverlay.classList.add('hidden');
+          windowSeatInteriorOverlay.classList.remove('flex');
+          heroHeaderSection.classList.remove('opacity-0', 'pointer-events-none');
+
+          document.getElementById('windowSeatBtnLabel').textContent = 'Window';
+          document.getElementById('windowSeatIconBox').classList.remove('border-amber-400', 'bg-amber-500/20');
+          document.getElementById('dockWindowLabel').textContent = 'Window Seat';
+          document.getElementById('dockWindowSeatBtn').classList.remove('text-amber-300');
+          showHighwayToast('Outside Highway View');
+        }
+      }
+
+      // -------------------------------------------------------------------
+      // 7. SEQUENCER, GEAR SHIFT & PLAYBACK CONTROLLER
+      // -------------------------------------------------------------------
+      function updateGearUI() {
+        if (gearMode === 0) {
+          gearModeLabel.textContent = '• 1x';
+          dockGearLabel.textContent = '1x Cruise';
+        } else if (gearMode === 1) {
+          gearModeLabel.textContent = '• 2x';
+          dockGearLabel.textContent = '2x Express';
+        } else {
+          gearModeLabel.textContent = '• Auto';
+          dockGearLabel.textContent = 'Always Drive';
+        }
+      }
+
+      function cycleGearMode() {
+        initAudio();
+        gearMode = (gearMode + 1) % 3;
+        playGearShiftRev();
+        chassisPitchDeg = -0.35;
+        spawnExhaustBurst(3);
+        updateGearUI();
+      }
+
+      function startSynthSequencer() {
+        stopSynthSequencer();
+        const track = PLAYLIST[currentTrackIdx];
+        if (!track || track.isCustomFile) return;
+
+        initAudio();
+        const stepMs = (60 / track.tempoBpm) * 1000 / 2;
+
+        const tick = () => {
+          if (!isPlaying) return;
+
+          const b = beatStep % 8;
+          if (b === 0) {
+            playDholakBeat('dha', track.rootFreq);
+            play90sBackingPad(track.rootFreq, (stepMs * 8) / 1000);
+          } else if (b === 2 || b === 6) {
+            playDholakBeat('na', track.rootFreq);
+          } else if (b === 3 || b === 5) {
+            playDholakBeat('ghe', track.rootFreq);
+          } else if (b === 4) {
+            playDholakBeat('ti', track.rootFreq);
+          }
+
+          if (ticksLeftInNote <= 0) {
+            const mNote = track.melody[melodyStepIdx % track.melody.length];
+            const ratio = track.scale[mNote.n] || 1;
+            const freq = track.rootFreq * ratio;
+            const durSec = (mNote.d * stepMs) / 1000;
+
+            play90sLeadNote(freq, durSec, track.leadStyle);
+            ticksLeftInNote = mNote.d;
+            melodyStepIdx++;
+          }
+
+          ticksLeftInNote--;
+          beatStep++;
+        };
+
+        tick();
+        stepTimer = setInterval(tick, stepMs);
+      }
+
+      function stopSynthSequencer() {
+        if (stepTimer) {
+          clearInterval(stepTimer);
+          stepTimer = null;
+        }
+      }
+
+      function togglePlayPause() {
+        // Start/resume the visible official YouTube player directly; do not open a popup.
+        const player = document.getElementById('youtubeMusicEmbed');
+        if (!player) return;
+        const origin = 'https://www.youtube-nocookie.com';
+        const command = window.busWalaYoutubePlaying ? 'pauseVideo' : 'playVideo';
+        try {
+          player.contentWindow.postMessage(JSON.stringify({
+            event: 'command', func: command, args: []
+          }), origin);
+          window.busWalaYoutubePlaying = command === 'playVideo';
+          if (youtubeMusicStatus) {
+            youtubeMusicStatus.textContent = window.busWalaYoutubePlaying
+              ? 'Playing official playlist…'
+              : 'Paused';
+          }
+          if (window.busWalaYoutubePlaying) {
+            playIcon.classList.add('hidden');
+            pauseIcon.classList.remove('hidden');
+            vinylLiveDot.classList.add('bg-emerald-400');
+            vinylLiveDot.classList.remove('bg-slate-400');
+          } else {
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+            vinylLiveDot.classList.remove('bg-emerald-400');
+            vinylLiveDot.classList.add('bg-slate-400');
+          }
+        } catch (_) {
+          if (youtubeMusicStatus) youtubeMusicStatus.textContent = 'Tap Play inside the YouTube player to start.';
+        }
+      }
+
+      function loadTrack(idx, autoPlay = true) {
+        if (idx < 0) idx = PLAYLIST.length - 1;
+        if (idx >= PLAYLIST.length) idx = 0;
+        currentTrackIdx = idx;
+
+        const track = PLAYLIST[currentTrackIdx];
+        stopSynthSequencer();
+        customAudioEl.pause();
+
+        trackTitleEl.textContent = track.title;
+        trackArtistEl.textContent = track.artist;
+        currentTimeSec = 0;
+        melodyStepIdx = 0;
+        ticksLeftInNote = 0;
+        beatStep = 0;
+
+        if (track.isCustomFile) {
+          customAudioEl.src = track.fileUrl;
+          customAudioEl.load();
+          customAudioEl.onloadedmetadata = () => {
+            track.durationSec = customAudioEl.duration || 240;
+            updateProgressUI(0, track.durationSec);
+            if (autoPlay) {
+              if (!isPlaying) togglePlayPause();
+              else customAudioEl.play().catch(() => {});
+            }
+          };
+        } else {
+          updateProgressUI(0, track.durationSec);
+          if (autoPlay) {
+            if (!isPlaying) togglePlayPause();
+            else startSynthSequencer();
+          }
+        }
+
+        renderPlaylistItems();
+      }
+
+      function nextTrack() {
+        if (youtubeMusicStatus) youtubeMusicStatus.textContent = 'Use Next in the YouTube player to change songs.';
+        document.getElementById('youtubeMusicEmbed')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }
+
+      function prevTrack() {
+        if (youtubeMusicStatus) youtubeMusicStatus.textContent = 'Use Previous in the YouTube player to change songs.';
+        document.getElementById('youtubeMusicEmbed')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }
+
+      function formatSec(sec) {
+        if (!isFinite(sec) || sec < 0) return '0:00';
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${String(s).padStart(2, '0')}`;
+      }
+
+      function updateProgressUI(cur, total) {
+        const ratio = total > 0 ? Math.min(1, Math.max(0, cur / total)) : 0;
+        seekSlider.value = Math.round(ratio * 1000);
+        seekProgressFill.style.width = `${ratio * 100}%`;
+        currentTimeEl.textContent = formatSec(cur);
+        totalDurationEl.textContent = formatSec(total);
+      }
+
+      // -------------------------------------------------------------------
+      // 9. UI EVENT LISTENERS
+      // -------------------------------------------------------------------
+      playPauseBtn.addEventListener('click', togglePlayPause);
+      nextBtn.addEventListener('click', nextTrack);
+      prevBtn.addEventListener('click', prevTrack);
+      gearShiftBtn.addEventListener('click', cycleGearMode);
+      dockGearBtn.addEventListener('click', cycleGearMode);
+      rainToggleBtn.addEventListener('click', toggleMonsoonRain);
+      ambientToggleBtn.addEventListener('click', cycleHighwayRoute);
+
+      heroWindowSeatBtn.addEventListener('click', toggleWindowSeatView);
+      topWindowSeatBtn.addEventListener('click', toggleWindowSeatView);
+      dockWindowSeatBtn.addEventListener('click', toggleWindowSeatView);
+      exitWindowSeatSvgBtn.addEventListener('click', toggleWindowSeatView);
+      mobileExitWindowSeatBtn.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); if (isWindowSeatView) toggleWindowSeatView(); });
+      busWindowsRow.addEventListener('click', toggleWindowSeatView);
+
+      function enjoyCuttingChai() {
+        playChaiSipSound();
+        showHighwayToast('☕ गरमा-गरम कटिंग चाय की चुस्की... आहा!');
+      }
+      cuttingChaiWidget.addEventListener('click', enjoyCuttingChai);
+      mobileCuttingChaiBtn.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); enjoyCuttingChai(); });
+
+      hornBtn.addEventListener('click', () => {
+        playIndianBusHorn();
+        if (!isPlaying) {
+          togglePlayPause();
+        }
+      });
+
+      function cycleConductorQuote() {
+        quoteIdx = (quoteIdx + 1) % CONDUCTOR_QUOTES.length;
+        conductorQuoteText.textContent = CONDUCTOR_QUOTES[quoteIdx];
+      }
+
+      conductorQuoteBtn.addEventListener('click', cycleConductorQuote);
+
+      seekSlider.addEventListener('input', (e) => {
+        const ratio = parseFloat(e.target.value) / 1000;
+        const track = PLAYLIST[currentTrackIdx];
+        const targetSec = ratio * (track.durationSec || 240);
+        currentTimeSec = targetSec;
+        if (track.isCustomFile && customAudioEl.duration) {
+          customAudioEl.currentTime = targetSec;
+        }
+        updateProgressUI(currentTimeSec, track.durationSec || 240);
+      });
+
+      volumeSlider.addEventListener('input', (e) => {
+        masterVol = parseFloat(e.target.value);
+        isMuted = masterVol === 0;
+        volProgressFill.style.width = `${masterVol * 100}%`;
+        if (masterGain && audioCtx) {
+          masterGain.gain.setTargetAtTime(masterVol, audioCtx.currentTime, 0.02);
+        }
+      });
+
+      muteBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        volProgressFill.style.width = isMuted ? '0%' : `${masterVol * 100}%`;
+        if (masterGain && audioCtx) {
+          masterGain.gain.setTargetAtTime(isMuted ? 0 : masterVol, audioCtx.currentTime, 0.02);
+        }
+      });
+
+      repeatBtn.addEventListener('click', () => {
+        isRepeat = !isRepeat;
+        repeatBtn.classList.toggle('text-[#f5c518]', isRepeat);
+      });
+
+      function openPlaylistModal() {
+        renderPlaylistItems();
+        playlistModal.classList.remove('hidden');
+        playlistModal.classList.add('flex');
+      }
+
+      function closePlaylistModal() {
+        playlistModal.classList.add('hidden');
+        playlistModal.classList.remove('flex');
+      }
+
+      dockTracksBtn.addEventListener('click', openPlaylistModal);
+      topPlaylistsBtn.addEventListener('click', openPlaylistModal);
+      closeModalBtn.addEventListener('click', closePlaylistModal);
+      playlistModal.addEventListener('click', (e) => {
+        if (e.target === playlistModal) closePlaylistModal();
+      });
+
+      customAudioEl.addEventListener('ended', () => {
+        if (isRepeat) {
+          customAudioEl.currentTime = 0;
+          customAudioEl.play().catch(() => {});
+        } else {
+          nextTrack();
+        }
+      });
+
+      function renderPlaylistItems() {
+        playlistContainer.innerHTML = '';
+        const message = document.createElement('div');
+        message.className = 'rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-center';
+        message.innerHTML = '<div class="text-sm font-semibold text-amber-200">बस वाला Official Playlist</div><p class="mt-1 text-[11px] text-slate-400">Only the owner-curated YouTube playlist is available on this site. Use the official player below.</p>';
+        playlistContainer.appendChild(message);
+      }
+
+      // Keyboard Shortcuts
+      window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT') return;
+        if (e.code === 'Space') {
+          e.preventDefault();
+          togglePlayPause();
+        } else if (e.key === 'h' || e.key === 'H') {
+          playIndianBusHorn();
+        } else if (e.key === 'w' || e.key === 'W') {
+          toggleWindowSeatView();
+        } else if (e.key === 'g' || e.key === 'G') {
+          cycleGearMode();
+        } else if (e.key === 'r' || e.key === 'R') {
+          toggleMonsoonRain();
+        } else if (e.code === 'ArrowRight') {
+          nextTrack();
+        } else if (e.code === 'ArrowLeft') {
+          prevTrack();
+        }
+      });
+
+      // -------------------------------------------------------------------
+      // 10. MULTI-LAYER PARALLAX NIGHT HIGHWAY & SMOOTH BUS MOTION ENGINE
+      // -------------------------------------------------------------------
+      let stars = [];
+      let clouds = [];
+      let desertTrees = [];
+      let desertShrubs = [];
+      let electricPoles = [];
+      let milestones = [];
+      let asphaltStreaks = [];
+      let foregroundBushes = [];
+
+      let farMtnOffset = 0;
+      let midMtnOffset = 0;
+      let roadOffset = 0;
+      let guardrailOffset = 0;
+      let exhaustSpawnTimer = 0;
+
+      function initSceneObjects() {
+        stars = [];
+        for (let i = 0; i < 170; i++) {
+          const inMilkyWay = Math.random() < 0.35;
+          stars.push({
+            x: inMilkyWay ? 0.35 + (Math.random() - 0.5) * 0.35 : Math.random(),
+            y: inMilkyWay ? Math.random() * 0.42 : Math.random() * 0.48,
+            r: Math.random() < 0.12 ? 1.6 + Math.random() * 1.1 : 0.6 + Math.random() * 0.9,
+            alpha: 0.3 + Math.random() * 0.7,
+            twinkleSpeed: 0.8 + Math.random() * 2.5,
+            phase: Math.random() * Math.PI * 2,
+            color: Math.random() < 0.2 ? '#fef08a' : (Math.random() < 0.4 ? '#bae6fd' : '#ffffff')
+          });
+        }
+
+        clouds = [
+          { x: 0.12, y: 0.13, w: 0.24, h: 0.055, speed: 0.003 },
+          { x: 0.58, y: 0.09, w: 0.28, h: 0.065, speed: 0.0022 },
+          { x: 0.86, y: 0.14, w: 0.22, h: 0.05, speed: 0.0028 }
+        ];
+
+        electricPoles = [
+          { x: 0.18 },
+          { x: 0.53 },
+          { x: 0.88 },
+          { x: 1.23 }
+        ];
+
+        desertTrees = [
+          { x: 0.09, scale: 0.88, yLayer: 0.62 },
+          { x: 0.44, scale: 0.62, yLayer: 0.59 },
+          { x: 0.78, scale: 0.74, yLayer: 0.60 },
+          { x: 1.05, scale: 1.22, yLayer: 0.64 }
+        ];
+
+        desertShrubs = [];
+        for (let i = 0; i < 20; i++) {
+          desertShrubs.push({
+            x: Math.random() * 1.2,
+            yRatio: 0.57 + Math.random() * 0.11,
+            r: 5 + Math.random() * 11
+          });
+        }
+
+        milestones = [
+          { x: 0.82, cityIdx: 0 }
+        ];
+
+        asphaltStreaks = [];
+        for (let i = 0; i < 26; i++) {
+          asphaltStreaks.push({
+            x: Math.random(),
+            yRatio: 0.74 + Math.random() * 0.24,
+            len: 25 + Math.random() * 65,
+            alpha: 0.05 + Math.random() * 0.10
+          });
+        }
+
+        foregroundBushes = [
+          { x: 0.64, r: 58 },
+          { x: 1.35, r: 46 }
+        ];
+
+        raindrops = [];
+        for (let i = 0; i < 110; i++) {
+          raindrops.push({
+            x: Math.random(),
+            y: Math.random(),
+            len: 14 + Math.random() * 18,
+            speed: 0.85 + Math.random() * 0.5
+          });
+        }
+      }
+
+      function spawnExhaustBurst(count = 1) {
+        if (isWindowSeatView) return;
+        const busRect = document.getElementById('indianBusSvg').getBoundingClientRect();
+        const pipeX = busRect.left + busRect.width * 0.152;
+        const pipeY = busRect.top + busRect.height * 0.79;
+
+        for (let i = 0; i < count; i++) {
+          exhaustParticles.push({
+            x: pipeX - Math.random() * 8,
+            y: pipeY + (Math.random() - 0.5) * 6,
+            vx: -(110 + busVelocity * 240 + Math.random() * 80),
+            vy: -(10 + Math.random() * 22),
+            r: 5 + Math.random() * 5,
+            alpha: 0.35 + Math.random() * 0.15,
+            life: 1.0
+          });
+        }
+      }
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+      initSceneObjects();
+
+      function drawScrollingMountainLayer(ctx, w, h, horizonY, offsetPx, points, fillStyle) {
+        ctx.fillStyle = fillStyle;
+        for (let tile = -1; tile <= 1; tile++) {
+          const baseX = tile * w - (offsetPx % w);
+          ctx.beginPath();
+          ctx.moveTo(baseX, horizonY);
+          points.forEach((pt) => {
+            ctx.lineTo(baseX + pt[0] * w, pt[1] * h);
+          });
+          ctx.lineTo(baseX + w, horizonY);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      function drawStylizedTree(ctx, x, groundY, scale) {
+        ctx.save();
+        ctx.translate(x, groundY);
+        ctx.scale(scale, scale);
+
+        ctx.fillStyle = 'rgba(10, 12, 16, 0.45)';
+        ctx.beginPath();
+        ctx.ellipse(0, 4, 36, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#2d211b';
+        ctx.lineCap = 'round';
+        ctx.lineWidth = 9;
+        ctx.beginPath();
+        ctx.moveTo(0, 2);
+        ctx.lineTo(0, -45);
+        ctx.stroke();
+
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(0, -28);
+        ctx.lineTo(-18, -48);
+        ctx.moveTo(0, -32);
+        ctx.lineTo(18, -50);
+        ctx.stroke();
+
+        const lobes = [
+          { cx: -22, cy: -54, r: 20, c1: '#2f452d', c2: '#1a2819' },
+          { cx: 22, cy: -52, r: 21, c1: '#2a3e28', c2: '#162215' },
+          { cx: -10, cy: -70, r: 23, c1: '#385235', c2: '#1e2e1d' },
+          { cx: 12, cy: -68, r: 22, c1: '#334b31', c2: '#1a2819' },
+          { cx: 0, cy: -56, r: 24, c1: '#2d432b', c2: '#182417' }
+        ];
+
+        lobes.forEach((l) => {
+          const grad = ctx.createRadialGradient(l.cx - l.r * 0.3, l.cy - l.r * 0.3, 2, l.cx, l.cy, l.r);
+          grad.addColorStop(0, l.c1);
+          grad.addColorStop(1, l.c2);
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(l.cx, l.cy, l.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        ctx.restore();
+      }
+
+      function drawIndianMilestone(ctx, x, y, cityObj) {
+        ctx.save();
+        ctx.translate(x, y);
+
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.beginPath();
+        ctx.ellipse(0, 2, 16, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(-12, -26, 24, 26);
+
+        ctx.fillStyle = '#f5c518';
+        ctx.beginPath();
+        ctx.arc(0, -26, 12, Math.PI, 0);
+        ctx.lineTo(12, -18);
+        ctx.lineTo(-12, -18);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 6.5px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(cityObj.hi, 0, -21);
+        ctx.font = 'bold 7.5px monospace';
+        ctx.fillText(String(cityObj.km), 0, -10);
+        ctx.font = '5px sans-serif';
+        ctx.fillText('km', 0, -3);
+
+        ctx.restore();
+      }
+
+      const freqBins = new Uint8Array(32);
+
+      function renderMiniSpectrum(bassEnergy) {
+        const mw = miniVisCanvas.width;
+        const mh = miniVisCanvas.height;
+        miniVisCtx.clearRect(0, 0, mw, mh);
+
+        const barCount = 10;
+        const barW = 3;
+        const gap = 2;
+
+        for (let i = 0; i < barCount; i++) {
+          let val = 0.2;
+          if (isPlaying && analyser) {
+            val = Math.max(0.18, (freqBins[i] || 20) / 255);
+          }
+          const bh = Math.max(2, val * mh);
+          const x = i * (barW + gap);
+          const y = mh - bh;
+
+          miniVisCtx.fillStyle = isPlaying ? '#f5c518' : 'rgba(148, 163, 184, 0.35)';
+          miniVisCtx.fillRect(x, y, barW, bh);
+        }
+      }
+
+      function animateHighway(now) {
+        const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+        lastFrameTime = now;
+
+        const w = canvas.width;
+        const h = canvas.height;
+        const route = HIGHWAY_ROUTES[currentRouteIdx];
+
+        // 1. Update Song Playback Clock
+        const track = PLAYLIST[currentTrackIdx];
+        if (isPlaying && track) {
+          if (track.isCustomFile) {
+            currentTimeSec = customAudioEl.currentTime || 0;
+            updateProgressUI(currentTimeSec, customAudioEl.duration || track.durationSec);
+          } else {
+            currentTimeSec += dt;
+            if (currentTimeSec >= track.durationSec) {
+              if (isRepeat) currentTimeSec = 0;
+              else nextTrack();
+            }
+            updateProgressUI(currentTimeSec, track.durationSec);
+          }
+        }
+
+        // 2. BUS VELOCITY, ACCELERATION & SLOWER, SMOOTHER SUSPENSION PHYSICS
+        if (hornSpeedBoost > 0) {
+          hornSpeedBoost = Math.max(0, hornSpeedBoost - dt * 1.1);
+        }
+
+        if (isPlaying) {
+          targetVelocity = (gearMode === 1 ? 1.45 : 1.0) + hornSpeedBoost;
+        } else if (gearMode === 2) {
+          targetVelocity = 1.1 + hornSpeedBoost;
+        } else {
+          targetVelocity = hornSpeedBoost;
+        }
+
+        // Smooth cushioned inertia acceleration / braking
+        const accelRate = targetVelocity > busVelocity ? 1.1 : 1.4;
+        busVelocity += (targetVelocity - busVelocity) * Math.min(1, dt * accelRate);
+        if (busVelocity < 0.005 && targetVelocity === 0) busVelocity = 0;
+
+        const isMovingNow = busVelocity > 0.08;
+        busStageWrapper.classList.toggle('is-moving', isMovingNow);
+        windowSeatInteriorOverlay.classList.toggle('is-moving', isMovingNow);
+
+        // Update Live Speedometer UI
+        const kmh = Math.round(busVelocity * 64);
+        speedometerText.textContent = `${String(kmh).padStart(2, '0')} km/h`;
+        speedStatusDot.className = `w-1.5 h-1.5 rounded-full ${
+          kmh > 75 ? 'bg-emerald-400 animate-ping' : (kmh > 5 ? 'bg-amber-400' : 'bg-rose-500')
+        }`;
+
+        if (ambientBusGain && ambientBusGain._osc && audioCtx) {
+          const targetPitch = 42 + busVelocity * 24;
+          ambientBusGain._osc.frequency.setTargetAtTime(targetPitch, audioCtx.currentTime, 0.12);
+        }
+
+        // Compute Audio Bass Energy & Render Mini Spectrum
+        let bassEnergy = 0;
+        if (analyser && isPlaying) {
+          analyser.getByteFrequencyData(freqBins);
+          let sum = 0;
+          for (let i = 0; i < 12; i++) sum += freqBins[i];
+          bassEnergy = sum / (12 * 255);
+        }
+        renderMiniSpectrum(bassEnergy);
+
+        // Smooth Wheel Rotation (Zero high-frequency jitter!)
+        wheelRotationDeg = (wheelRotationDeg + busVelocity * 480 * dt) % 360;
+        const slowWheelFloatY = isMovingNow ? Math.sin(now * 0.0032) * 0.45 * Math.min(1.2, busVelocity) : 0;
+        rearWheelRotor.setAttribute('transform', `rotate(${wheelRotationDeg.toFixed(1)})`);
+        frontWheelRotor.setAttribute('transform', `rotate(${wheelRotationDeg.toFixed(1)})`);
+        rearWheelMount.setAttribute('transform', `translate(367, ${(326 + slowWheelFloatY).toFixed(2)})`);
+        frontWheelMount.setAttribute('transform', `translate(715, ${(326 - slowWheelFloatY * 0.7).toFixed(2)})`);
+
+        // Slower, Gentler Highway Suspension Float (Low-frequency gentle sine wave)
+        chassisPitchDeg += (0 - chassisPitchDeg) * Math.min(1, dt * 2.2);
+        const gentleRoadWaveY = isMovingNow
+          ? (Math.sin(now * 0.0022) * 1.15 + Math.sin(now * 0.0051) * 0.45) * Math.min(1.2, busVelocity)
+          : Math.sin(now * 0.004) * 0.2;
+        const dynamicPitch = chassisPitchDeg + (isMovingNow ? Math.cos(now * 0.002) * 0.12 * busVelocity : 0);
+
+        busChassisGroup.setAttribute(
+          'transform',
+          `translate(0, ${gentleRoadWaveY.toFixed(2)}) rotate(${dynamicPitch.toFixed(2)}, 500, 300)`
+        );
+        busRoadShadow.setAttribute('rx', (342 + gentleRoadWaveY * 1.5).toFixed(1));
+
+        // Gentle sway for Inside Window Seat Cabin Frame
+        if (isWindowSeatView && interiorCabinFrame) {
+          interiorCabinFrame.style.transform = `translateY(${(gentleRoadWaveY * 1.2).toFixed(2)}px)`;
+        }
+
+        if (rearMudflap) {
+          const flapX = 316 - Math.min(12, busVelocity * 6 + Math.sin(now * 0.008) * 1.2 * busVelocity);
+          rearMudflap.setAttribute('x2', flapX.toFixed(1));
+        }
+
+        // Spawn continuous exhaust puffs when moving
+        exhaustSpawnTimer += dt * (0.6 + busVelocity * 4.2);
+        if (exhaustSpawnTimer >= 1) {
+          exhaustSpawnTimer = 0;
+          spawnExhaustBurst(1);
+        }
+
+        // -----------------------------------------------------------------
+        // LAYER 1: NIGHT SKY, MILKY WAY & SHOOTING STARS
+        // -----------------------------------------------------------------
+        const horizonY = h * 0.56;
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
+        skyGrad.addColorStop(0, route.skyTop);
+        skyGrad.addColorStop(0.55, route.skyMid);
+        skyGrad.addColorStop(1, route.skyHorizon);
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, w, horizonY + 10);
+
+        // Diagonal Milky Way Galactic Glow Band
+        ctx.save();
+        ctx.translate(w * 0.48, h * 0.16);
+        ctx.rotate(-0.42);
+        const milkyGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, w * 0.36);
+        milkyGrad.addColorStop(0, 'rgba(216, 180, 254, 0.14)');
+        milkyGrad.addColorStop(0.45, 'rgba(125, 211, 252, 0.06)');
+        milkyGrad.addColorStop(1, 'rgba(15, 23, 42, 0)');
+        ctx.fillStyle = milkyGrad;
+        ctx.fillRect(-w * 0.45, -h * 0.18, w * 0.9, h * 0.36);
+        ctx.restore();
+
+        // Twinkling Stars
+        stars.forEach((st) => {
+          st.x -= busVelocity * 0.004 * dt;
+          if (st.x < 0) st.x += 1;
+          const tw = 0.55 + 0.45 * Math.sin(now * 0.002 * st.twinkleSpeed + st.phase);
+          ctx.fillStyle = st.color;
+          ctx.globalAlpha = st.alpha * tw;
+          ctx.beginPath();
+          ctx.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+
+        // Occasional Shooting Stars
+        if (Math.random() < 0.004 && shootingStars.length < 2) {
+          shootingStars.push({
+            x: (0.2 + Math.random() * 0.6) * w,
+            y: (0.04 + Math.random() * 0.18) * h,
+            vx: -380 - Math.random() * 180,
+            vy: 140 + Math.random() * 90,
+            life: 1.0
+          });
+        }
+        for (let i = shootingStars.length - 1; i >= 0; i--) {
+          const ss = shootingStars[i];
+          ss.x += ss.vx * dt;
+          ss.y += ss.vy * dt;
+          ss.life -= dt * 1.6;
+          if (ss.life <= 0) {
+            shootingStars.splice(i, 1);
+            continue;
+          }
+          const grad = ctx.createLinearGradient(ss.x, ss.y, ss.x - ss.vx * 0.12, ss.y - ss.vy * 0.12);
+          grad.addColorStop(0, `rgba(255, 255, 255, ${ss.life})`);
+          grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(ss.x, ss.y);
+          ctx.lineTo(ss.x - ss.vx * 0.12, ss.y - ss.vy * 0.12);
+          ctx.stroke();
+        }
+
+        // Drifting Nocturnal Clouds
+        clouds.forEach((c) => {
+          c.x -= (c.speed + busVelocity * 0.008) * dt;
+          if (c.x < -0.35) c.x = 1.25;
+          const cx = c.x * w;
+          const cy = c.y * h;
+          const cw = c.w * w;
+          const ch = c.h * h;
+          const cGrad = ctx.createRadialGradient(cx, cy, ch * 0.2, cx, cy, cw * 0.6);
+          cGrad.addColorStop(0, 'rgba(51, 65, 85, 0.32)');
+          cGrad.addColorStop(1, 'rgba(15, 23, 42, 0)');
+          ctx.fillStyle = cGrad;
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, cw * 0.6, ch, 0, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // -----------------------------------------------------------------
+        // LAYER 2: SCROLLING DUAL MOUNTAIN RANGES
+        // -----------------------------------------------------------------
+        farMtnOffset = (farMtnOffset + busVelocity * 16 * dt) % w;
+        const farPeaks = [
+          [0.0, 0.44], [0.14, 0.29], [0.28, 0.41], [0.42, 0.36],
+          [0.58, 0.48], [0.74, 0.31], [0.89, 0.25], [1.0, 0.44]
+        ];
+        drawScrollingMountainLayer(ctx, w, h, horizonY, farMtnOffset, farPeaks, route.farMtn);
+
+        midMtnOffset = (midMtnOffset + busVelocity * 38 * dt) % w;
+        const midGrad = ctx.createLinearGradient(0, h * 0.32, 0, horizonY);
+        midGrad.addColorStop(0, route.midMtnTop);
+        midGrad.addColorStop(1, route.midMtnBot);
+        const midPeaks = [
+          [0.0, 0.49], [0.11, 0.38], [0.25, 0.46], [0.38, 0.42],
+          [0.52, 0.51], [0.68, 0.39], [0.83, 0.34], [0.94, 0.45], [1.0, 0.49]
+        ];
+        drawScrollingMountainLayer(ctx, w, h, horizonY, midMtnOffset, midPeaks, midGrad);
+
+        // -----------------------------------------------------------------
+        // LAYER 3: DESERT / GHAT TERRAIN, POLES & TREES
+        // -----------------------------------------------------------------
+        const roadTopY = h * 0.72;
+        const desertGrad = ctx.createLinearGradient(0, horizonY, 0, roadTopY);
+        desertGrad.addColorStop(0, route.terrainTop);
+        desertGrad.addColorStop(0.45, route.terrainMid);
+        desertGrad.addColorStop(1, route.terrainBot);
+        ctx.fillStyle = desertGrad;
+        ctx.fillRect(0, horizonY - 2, w, roadTopY - horizonY + 4);
+
+        // Roadside Silhouette Electricity Poles
+        electricPoles.forEach((p) => {
+          p.x -= busVelocity * 0.14 * dt;
+          if (p.x < -0.2) p.x += 1.4;
+
+          const px = p.x * w;
+          const pyBottom = horizonY + (roadTopY - horizonY) * 0.55;
+          const pyTop = horizonY - h * 0.08;
+
+          ctx.strokeStyle = 'rgba(28, 25, 34, 0.85)';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(px, pyBottom);
+          ctx.lineTo(px, pyTop);
+          ctx.moveTo(px - 10, pyTop + 6);
+          ctx.lineTo(px + 10, pyTop + 6);
+          ctx.stroke();
+        });
+
+        // Scrub Bushes
+        desertShrubs.forEach((b) => {
+          b.x -= busVelocity * 0.15 * dt;
+          if (b.x < -0.08) b.x = 1.12;
+
+          const bx = b.x * w;
+          const by = b.yRatio * h;
+          ctx.fillStyle = '#253524';
+          ctx.beginPath();
+          ctx.ellipse(bx, by, b.r * 1.3, b.r * 0.8, 0, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Stylized Trees
+        desertTrees.forEach((t) => {
+          t.x -= busVelocity * 0.19 * dt;
+          if (t.x < -0.15) t.x = 1.15;
+          drawStylizedTree(ctx, t.x * w, t.yLayer * h, t.scale);
+        });
+
+        // -----------------------------------------------------------------
+        // LAYER 4: PASSING INDIAN MILESTONES & METALLIC HIGHWAY GUARDRAIL
+        // -----------------------------------------------------------------
+        milestones.forEach((ms) => {
+          ms.x -= busVelocity * 0.36 * dt;
+          if (ms.x < -0.1) {
+            ms.x = 1.18;
+            ms.cityIdx = (ms.cityIdx + 1) % route.milestones.length;
+          }
+          const cityObj = route.milestones[ms.cityIdx % route.milestones.length];
+          drawIndianMilestone(ctx, ms.x * w, roadTopY - 4, cityObj);
+        });
+
+        // Metallic W-Beam Guardrail
+        const railY = roadTopY - 22;
+        const postSpacing = 96;
+        guardrailOffset = (guardrailOffset + busVelocity * 420 * dt) % postSpacing;
+
+        ctx.fillStyle = '#334155';
+        for (let gx = -guardrailOffset; gx < w + postSpacing; gx += postSpacing) {
+          ctx.fillRect(gx, railY + 8, 6, 16);
+        }
+
+        const railGrad = ctx.createLinearGradient(0, railY, 0, railY + 13);
+        railGrad.addColorStop(0, '#94a3b8');
+        railGrad.addColorStop(0.35, '#cbd5e1');
+        railGrad.addColorStop(0.65, '#64748b');
+        railGrad.addColorStop(1, '#475569');
+        ctx.fillStyle = railGrad;
+        ctx.fillRect(0, railY, w, 12);
+
+        for (let gx = -guardrailOffset; gx < w + postSpacing; gx += postSpacing) {
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillRect(gx + 1, railY + 4, 4, 4);
+        }
+
+        // -----------------------------------------------------------------
+        // LAYER 5: ASPHALT HIGHWAY, ROAD LIGHT REFLECTIONS & MONSOON RAIN
+        // -----------------------------------------------------------------
+        const roadGrad = ctx.createLinearGradient(0, roadTopY, 0, h);
+        roadGrad.addColorStop(0, '#262930');
+        roadGrad.addColorStop(0.25, '#1b1e24');
+        roadGrad.addColorStop(0.75, '#12141a');
+        roadGrad.addColorStop(1, '#0b0d12');
+        ctx.fillStyle = roadGrad;
+        ctx.fillRect(0, roadTopY, w, h - roadTopY);
+
+        // Clean Shoulder Line
+        ctx.fillStyle = 'rgba(203, 213, 225, 0.25)';
+        ctx.fillRect(0, roadTopY + 3, w, 2);
+
+        // Subtle Asphalt Grain Streaks
+        asphaltStreaks.forEach((st) => {
+          st.x -= busVelocity * 0.85 * dt;
+          if (st.x < -0.1) st.x = 1.1;
+          ctx.fillStyle = `rgba(255, 255, 255, ${st.alpha * Math.min(1.2, 0.25 + busVelocity)})`;
+          ctx.fillRect(st.x * w, st.yRatio * h, st.len * (0.5 + busVelocity * 0.6), 1.2);
+        });
+
+        // Scrolling Highway Dashed Lane Markings
+        roadOffset = (roadOffset + busVelocity * 720 * dt) % 220;
+        const laneY = roadTopY + (h - roadTopY) * 0.46;
+        ctx.fillStyle = '#d97706';
+        for (let lx = -roadOffset; lx < w + 220; lx += 220) {
+          ctx.fillRect(lx, laneY, 95, 3.8);
+        }
+
+        // Subtle, localized road sheen. No projected headlight cones or broad glare streaks.
+        if (!isWindowSeatView) {
+          const reflectY = roadTopY + (h - roadTopY) * 0.43;
+          const sheen = ctx.createRadialGradient(w * 0.50, reflectY, 2, w * 0.50, reflectY, w * 0.13);
+          sheen.addColorStop(0, 'rgba(214, 163, 73, 0.075)');
+          sheen.addColorStop(0.55, 'rgba(180, 125, 48, 0.028)');
+          sheen.addColorStop(1, 'rgba(180, 125, 48, 0)');
+          ctx.fillStyle = sheen;
+          ctx.beginPath();
+          ctx.ellipse(w * 0.50, reflectY, w * 0.13, (h - roadTopY) * 0.13, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Rear Exhaust Smoke Puffs
+        for (let i = exhaustParticles.length - 1; i >= 0; i--) {
+          const p = exhaustParticles[i];
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.r += 16 * dt;
+          p.life -= dt * 1.35;
+          if (p.life <= 0) {
+            exhaustParticles.splice(i, 1);
+            continue;
+          }
+          const puffGrad = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, p.r);
+          puffGrad.addColorStop(0, `rgba(203, 213, 225, ${(p.alpha * p.life).toFixed(3)})`);
+          puffGrad.addColorStop(1, 'rgba(148, 163, 184, 0)');
+          ctx.fillStyle = puffGrad;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Bottom Foreground Bushes
+        foregroundBushes.forEach((fb) => {
+          fb.x -= busVelocity * 0.78 * dt;
+          if (fb.x < -0.25) fb.x = 1.35;
+          const fbx = fb.x * w;
+          const fby = h * 0.97;
+          const bushGrad = ctx.createRadialGradient(fbx, fby, 8, fbx, fby, fb.r * 1.4);
+          bushGrad.addColorStop(0, 'rgba(20, 32, 22, 0.92)');
+          bushGrad.addColorStop(0.6, 'rgba(15, 24, 17, 0.65)');
+          bushGrad.addColorStop(1, 'rgba(10, 14, 12, 0)');
+          ctx.fillStyle = bushGrad;
+          ctx.beginPath();
+          ctx.ellipse(fbx, fby, fb.r * 1.5, fb.r * 0.9, 0, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Monsoon Rain Overlay
+        if (monsoonRainOn) {
+          ctx.strokeStyle = 'rgba(186, 230, 253, 0.35)';
+          ctx.lineWidth = 1.2;
+          const windSlant = -12 - busVelocity * 16;
+          raindrops.forEach((r) => {
+            r.y += r.speed * dt * 1.3;
+            r.x -= (0.12 + busVelocity * 0.25) * dt;
+            if (r.y > 1.05) {
+              r.y = -0.05;
+              r.x = Math.random() * 1.2;
+            }
+            if (r.x < -0.1) r.x = 1.1;
+
+            const rx = r.x * w;
+            const ry = r.y * h;
+            ctx.beginPath();
+            ctx.moveTo(rx, ry);
+            ctx.lineTo(rx + windSlant, ry + r.len);
+            ctx.stroke();
+          });
+        }
+
+        // Subtle Audio-Reactive Glow on Bus Windows
+        if (busWindowsRow) {
+          const brightness = 1 + bassEnergy * 0.22;
+          busWindowsRow.style.filter = `brightness(${brightness.toFixed(2)})`;
+        }
+
+        requestAnimationFrame(animateHighway);
+      }
+
+      // Initialize UI & start animation loop
+      updateGearUI();
+      updateProgressUI(0, 0);
+      renderPlaylistItems();
+      requestAnimationFrame(animateHighway);
+    })();
+  </script>
+
+  <!-- Live online counter via Supabase Realtime Presence. -->
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // Create a Supabase project, then paste its Project URL and publishable key here.
+    const SUPABASE_URL = 'PASTE_SUPABASE_PROJECT_URL_HERE';
+    const SUPABASE_PUBLISHABLE_KEY = 'PASTE_SUPABASE_PUBLISHABLE_KEY_HERE';
+    const onlineCountEl = document.getElementById('onlineCount');
+    const configReady = ![SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY].some(value => value.includes('PASTE_'));
+
+    if (!configReady) {
+      onlineCountEl.textContent = '—';
+      onlineCountEl.title = 'Connect Supabase to enable the live online counter.';
+    } else {
+      try {
+        const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+        const presenceKey = (globalThis.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : 'visitor-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+        const channel = supabase.channel('bus-wala-live-visitors', {
+          config: { presence: { key: presenceKey } }
+        });
+
+        channel.on('presence', { event: 'sync' }, () => {
+          const state = channel.presenceState();
+          onlineCountEl.textContent = String(Object.keys(state).length);
+          onlineCountEl.title = 'Approximate active website sessions';
+        });
+
+        channel.subscribe(async status => {
+          if (status === 'SUBSCRIBED') {
+            const result = await channel.track({ online_at: new Date().toISOString(), page: 'bus-wala' });
+            if (result && result.error) onlineCountEl.textContent = '—';
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+            onlineCountEl.textContent = '—';
+          }
+        });
+
+        window.addEventListener('pagehide', () => {
+          channel.untrack().catch(() => {});
+          supabase.removeChannel(channel).catch(() => {});
+        }, { once: true });
+      } catch (_) {
+        onlineCountEl.textContent = '—';
+      }
+    }
+  </script>
+
+</body>
+</html>
