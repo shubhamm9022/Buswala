@@ -2166,6 +2166,10 @@
       }
 
       function ytApplyVolume() {
+        if (pipedMode) {
+          try { customAudioEl.volume = Math.min(1, Math.max(0, masterVol)); customAudioEl.muted = isMuted; } catch (_) {}
+          return;
+        }
         if (!ytReady) return;
         try {
           ytPlayer.setVolume(Math.round(masterVol * 100));
@@ -2241,6 +2245,7 @@
           listType: 'playlist', list: YT_PLAYLIST_ID,
           controls: 0, disablekb: 1, playsinline: 1, rel: 0, modestbranding: 1, iv_load_policy: 3, fs: 0
         };
+        if (ytStartIndex > 0) vars.index = ytStartIndex;
         if (/^https?:/.test(location.protocol)) vars.origin = location.origin;
         ytPlayer = new window.YT.Player('ytPlayer', {
           host: 'https://www.youtube-nocookie.com',
@@ -2259,15 +2264,277 @@
         });
       }
 
-      (function loadYtApi() {
+      // -------------------------------------------------------------------
+      // PIPED ENGINE (ad-free audio). Songs still come from YOUR YouTube playlist,
+      // so you only ever add/remove songs in YouTube. If every Piped server is
+      // down, the site automatically falls back to the official YouTube player.
+      // -------------------------------------------------------------------
+      const PIPED_INSTANCES = [
+        'https://pipedapi.kavin.rocks',
+        'https://pipedapi.leptons.xyz',
+        'https://pipedapi.nosebs.ru',
+        'https://pipedapi-libre.kavin.rocks',
+        'https://piped-api.privacy.com.de',
+        'https://pipedapi.adminforge.de',
+        'https://api.piped.private.coffee',
+        'https://pipedapi.drgns.space'
+      ];
+      const PIPED_MAX_TRIES = 6;          // servers tried per request
+      const PIPED_TIMEOUT_MS = 7000;      // per server
+      const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+
+      let pipedApi = null;        // last server that worked (tried first next time)
+      let pipedMode = false;      // true once the playlist loaded from Piped
+      let pipedGaveUp = false;    // true once we switched to the YouTube player
+      let pipedTracks = [];
+      let pipedIdx = 0;
+      let pipedLoadToken = 0;     // cancels stale loads when the listener skips quickly
+      let pipedLoading = false;
+      let pipedStarted = false;
+      let pipedFailStreak = 0;
+      let audioUnlocked = false;
+      let ytStartIndex = 0;
+      let ytApiRequested = false;
+
+      async function pipedFetch(path) {
+        const bases = (pipedApi ? [pipedApi].concat(PIPED_INSTANCES.filter((b) => b !== pipedApi)) : PIPED_INSTANCES)
+          .slice(0, PIPED_MAX_TRIES);
+        let lastErr = new Error('No Piped server reachable');
+        for (const base of bases) {
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), PIPED_TIMEOUT_MS);
+          try {
+            const res = await fetch(base + path, { signal: ctrl.signal });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            if (data && data.error) throw new Error(String(data.error));
+            pipedApi = base;
+            return data;
+          } catch (err) {
+            lastErr = err;
+          } finally {
+            clearTimeout(timer);
+          }
+        }
+        throw lastErr;
+      }
+
+      // 1. Load all songs in your YouTube playlist (follows Piped's pagination, 100 per page)
+      async function loadPlaylistFromPiped() {
+        const first = await pipedFetch('/playlists/' + YT_PLAYLIST_ID);
+        let items = (first.relatedStreams || []).slice();
+        let next = first.nextpage;
+        for (let guard = 0; next && guard < 30; guard++) {
+          try {
+            const more = await pipedFetch('/nextpage/playlists/' + YT_PLAYLIST_ID + '?nextpage=' + encodeURIComponent(next));
+            items = items.concat(more.relatedStreams || []);
+            next = more.nextpage;
+          } catch (_) { break; }
+        }
+        const seen = new Set();
+        return items.map((item) => {
+          const q = String(item.url || '').split('?')[1] || '';
+          const videoId = new URLSearchParams(q).get('v');
+          return {
+            videoId,
+            title: item.title || 'Untitled',
+            artist: String(item.uploaderName || '').replace(/\s+-\s+Topic$/i, ''),
+            thumb: item.thumbnail,
+            duration: item.duration > 0 ? item.duration : 0
+          };
+        }).filter((t) => t.videoId && !seen.has(t.videoId) && seen.add(t.videoId));
+      }
+
+      function pickAudioUrl(data) {
+        let list = (data.audioStreams || []).filter((s) => s && s.url && !s.videoOnly);
+        if (!list.length) return null;
+        // Only keep formats this browser can really play (Safari can't do WebM/Opus)
+        const playable = list.filter((s) => !s.mimeType || customAudioEl.canPlayType(s.mimeType) !== '');
+        if (playable.length) list = playable;
+        // Highest bitrate audio-only stream
+        return list.slice().sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0].url;
+      }
+
+      // 2. Fetch a song's raw ad-free audio stream and play it
+      async function playYouTubeVideoAdFree(videoId, token) {
+        const data = await pipedFetch('/streams/' + videoId);
+        if (token !== pipedLoadToken) return false;           // listener already skipped
+        const url = pickAudioUrl(data);
+        if (!url) throw new Error('No audio stream');
+        customAudioEl.src = url;
+        pipedLoading = false;
+        ytApplyVolume();
+        if (!ytWantPlay) return true;                         // paused while loading: keep it ready
+        await customAudioEl.play();
+        return true;
+      }
+
+      function setPipedMeta(track) {
+        trackTitleEl.textContent = track.title;
+        trackArtistEl.textContent = track.artist || 'Bus Wala Official Playlist';
+        document.title = track.title + ' — बस वाला';
+        if ('mediaSession' in navigator && window.MediaMetadata) {
+          try {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: track.title,
+              artist: track.artist || 'Bus Wala',
+              album: 'Bus Wala Official Playlist',
+              artwork: [{ src: 'https://i.ytimg.com/vi/' + track.videoId + '/hqdefault.jpg', sizes: '480x360', type: 'image/jpeg' }]
+            });
+          } catch (_) {}
+        }
+        paintTracks();
+      }
+
+      async function playPipedTrack(idx) {
+        if (!pipedTracks.length) return;
+        if (idx < 0) idx = pipedTracks.length - 1;
+        if (idx >= pipedTracks.length) idx = 0;
+        pipedIdx = idx;
+        const track = pipedTracks[idx];
+        const token = ++pipedLoadToken;
+        pipedLoading = true;
+        pipedStarted = false;
+        try { customAudioEl.pause(); } catch (_) {}
+        setPipedMeta(track);
+        ytDuration = track.duration;
+        currentTimeSec = 0;
+        updateProgressUI(0, ytDuration);
+        try {
+          const ok = await playYouTubeVideoAdFree(track.videoId, token);
+          if (!ok || token !== pipedLoadToken) return;
+          pipedStarted = !!ytWantPlay;
+          pipedFailStreak = 0;
+          if (ytWantPlay) setPlayingUI(true);
+        } catch (err) {
+          if (token !== pipedLoadToken) return;
+          pipedLoading = false;
+          if (err && err.name === 'NotAllowedError') {          // browser blocked autoplay: wait for a tap
+            ytWantPlay = false;
+            setPlayingUI(false);
+            showHighwayToast('▶ Tap play to start the music');
+            return;
+          }
+          if (err && err.name === 'AbortError') return;
+          handlePipedTrackError();
+        }
+      }
+
+      function handlePipedTrackError() {
+        pipedFailStreak++;
+        if (pipedFailStreak >= 3) { switchToYoutubeFallback(); return; }
+        trackTitleEl.textContent = 'Song unavailable';
+        trackArtistEl.textContent = 'Skipping to the next song…';
+        const from = pipedLoadToken;
+        setTimeout(() => {
+          if (pipedMode && from === pipedLoadToken && ytWantPlay) playPipedTrack(pipedIdx + 1);
+        }, 900);
+      }
+
+      // iOS/Safari only allow audio started inside a tap. Our stream URL arrives after a network
+      // request, so the very first tap "unlocks" the audio element with a silent clip.
+      function unlockPipedAudio() {
+        if (audioUnlocked || pipedGaveUp) return;
+        audioUnlocked = true;
+        try {
+          customAudioEl.src = SILENT_WAV;
+          const p = customAudioEl.play();
+          if (p && p.catch) p.catch(() => {});
+        } catch (_) {}
+      }
+
+      function setupMediaSession() {
+        if (!('mediaSession' in navigator)) return;
+        const set = (action, fn) => { try { navigator.mediaSession.setActionHandler(action, fn); } catch (_) {} };
+        set('play', () => { if (!isPlaying) togglePlayPause(); });
+        set('pause', () => { if (isPlaying) togglePlayPause(); });
+        set('nexttrack', () => nextTrack());
+        set('previoustrack', () => prevTrack());
+        set('seekto', (d) => { if (pipedMode && d && d.seekTime != null) { try { customAudioEl.currentTime = d.seekTime; } catch (_) {} } });
+      }
+
+      customAudioEl.addEventListener('error', () => {
+        if (!pipedMode || !ytWantPlay) return;
+        const src = customAudioEl.currentSrc || '';
+        if (!src || src.startsWith('data:')) return;
+        handlePipedTrackError();
+      });
+      customAudioEl.addEventListener('durationchange', () => {
+        const d = customAudioEl.duration;
+        if (pipedMode && isFinite(d) && d > 0 && !(customAudioEl.currentSrc || '').startsWith('data:')) ytDuration = d;
+      });
+
+      function loadYtApi() {
+        if (ytApiRequested) return;
+        ytApiRequested = true;
         window.onYouTubeIframeAPIReady = createYtPlayer;
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         tag.async = true;
         document.head.appendChild(tag);
-      })();
+      }
+
+      function switchToYoutubeFallback() {
+        if (pipedGaveUp) return;
+        pipedGaveUp = true;
+        pipedMode = false;
+        pipedLoadToken++;
+        pipedLoading = false;
+        try { customAudioEl.pause(); } catch (_) {}
+        ytStartIndex = pipedIdx;
+        trackTitleEl.textContent = 'Loading playlist…';
+        showHighwayToast('Ad-free server busy — switching to the YouTube player');
+        loadYtApi();
+      }
+
+      async function initPipedEngine() {
+        try {
+          const list = await loadPlaylistFromPiped();
+          if (!list.length) throw new Error('Empty playlist');
+          pipedTracks = list;
+          pipedIdx = 0;
+          ytIds = list.map((t) => t.videoId);
+          list.forEach((t) => { ytTitles[t.videoId] = { title: t.title, author: t.artist }; });
+          customAudioEl.removeAttribute('crossorigin');   // audio is never routed through WebAudio, so CORS isn't needed
+          pipedMode = true;
+          setupMediaSession();
+          if (ytWantPlay) {
+            playPipedTrack(0);
+          } else {
+            setPipedMeta(list[0]);
+            ytDuration = list[0].duration;
+            updateProgressUI(0, ytDuration);
+          }
+        } catch (err) {
+          console.warn('Piped unavailable, using the YouTube player instead:', err);
+          pipedGaveUp = true;
+          loadYtApi();
+        }
+      }
+      initPipedEngine();
 
       function togglePlayPause() {
+        unlockPipedAudio();
+        if (pipedMode) {
+          if (isPlaying) {
+            ytWantPlay = false;
+            pipedStarted = false;
+            customAudioEl.pause();
+            setPlayingUI(false);
+          } else {
+            ytWantPlay = true;
+            setPlayingUI(true);
+            const src = customAudioEl.currentSrc || '';
+            if (!pipedLoading && src && !src.startsWith('data:') && !customAudioEl.ended) {
+              customAudioEl.play().then(() => { pipedStarted = true; }).catch((e) => {
+                if (e && e.name === 'NotAllowedError') { ytWantPlay = false; setPlayingUI(false); }
+              });
+            } else if (!pipedLoading) {
+              playPipedTrack(pipedIdx);
+            }
+          }
+          return;
+        }
         if (!ytReady) {
           // Player still loading: remember the tap and start as soon as it is ready.
           ytWantPlay = !ytWantPlay;
@@ -2284,6 +2551,19 @@
       }
 
       function ytPoll(now) {
+        if (pipedMode) {
+          if (ytSeeking || pipedLoading || now - ytLastPoll < 250) return;
+          ytLastPoll = now;
+          // Phone call / headphone button / OS paused the audio: keep the dock in sync
+          if (pipedStarted && isPlaying && customAudioEl.paused && !customAudioEl.ended) {
+            pipedStarted = false;
+            ytWantPlay = false;
+            setPlayingUI(false);
+          }
+          currentTimeSec = customAudioEl.currentTime || 0;
+          updateProgressUI(currentTimeSec, ytDuration);
+          return;
+        }
         if (!ytReady || ytSeeking || now - ytLastPoll < 250) return;
         ytLastPoll = now;
         try {
@@ -2332,12 +2612,24 @@
       }
 
       function nextTrack() {
+        if (pipedMode) {
+          ytWantPlay = true;
+          setPlayingUI(true);
+          playPipedTrack(pipedIdx + 1);
+          return;
+        }
         if (!ytReady) return;
         ytWantPlay = true;
         try { ytPlayer.nextVideo(); } catch (_) {}
       }
 
       function prevTrack() {
+        if (pipedMode) {
+          ytWantPlay = true;
+          if ((customAudioEl.currentTime || 0) > 4) { customAudioEl.currentTime = 0; if (customAudioEl.paused) togglePlayPause(); }
+          else { setPlayingUI(true); playPipedTrack(pipedIdx - 1); }
+          return;
+        }
         if (!ytReady) return;
         ytWantPlay = true;
         try {
@@ -2407,7 +2699,8 @@
       });
       seekSlider.addEventListener('change', (e) => {
         const ratio = parseFloat(e.target.value) / 1000;
-        if (ytReady && ytDuration) { try { ytPlayer.seekTo(ratio * ytDuration, true); } catch (_) {} }
+        if (pipedMode) { if (ytDuration) { try { customAudioEl.currentTime = ratio * ytDuration; } catch (_) {} } }
+        else if (ytReady && ytDuration) { try { ytPlayer.seekTo(ratio * ytDuration, true); } catch (_) {} }
         ytSeeking = false;
       });
 
@@ -2447,7 +2740,7 @@
       let titleQueue = [];
       let titleBusy = 0;
 
-      function ytCurrentIndex() { try { return ytPlayer.getPlaylistIndex(); } catch (_) { return -1; } }
+      function ytCurrentIndex() { if (pipedMode) return pipedIdx; try { return ytPlayer.getPlaylistIndex(); } catch (_) { return -1; } }
 
       function fetchTitle(id) {
         const watch = encodeURIComponent('https://www.youtube.com/watch?v=' + id);
@@ -2493,6 +2786,14 @@
           num.textContent = i === cur ? '▶' : String(i + 1);
           btn.append(num, img, info);
           btn.addEventListener('click', () => {
+            if (pipedMode) {
+              unlockPipedAudio();
+              ytWantPlay = true;
+              setPlayingUI(true);
+              playPipedTrack(i);
+              closeTracksModal();
+              return;
+            }
             if (!ytReady) return;
             ytWantPlay = true;
             try { ytPlayer.playVideoAt(i); } catch (_) {}
@@ -2534,6 +2835,7 @@
       topPlaylistsBtn.addEventListener('click', openTracksModal);
 
       customAudioEl.addEventListener('ended', () => {
+        if ((customAudioEl.currentSrc || '').startsWith('data:')) return;   // silent unlock clip
         if (isRepeat) {
           customAudioEl.currentTime = 0;
           customAudioEl.play().catch(() => {});
